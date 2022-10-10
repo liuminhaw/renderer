@@ -14,6 +14,7 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
+// RenderPage rendered given url in browser and returns result html content
 func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 	fmt.Printf("ctx headless: %v\n", ctx.Value("headless"))
 
@@ -58,6 +59,7 @@ func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 	return []byte(res), nil
 }
 
+// navigateAndWaitFor is defined as task of chromedp for rendering step
 func navigateAndWaitFor(url string, eventName string) chromedp.ActionFunc {
 	return func(ctx context.Context) error {
 		_, _, _, err := page.Navigate(url).Do(ctx)
@@ -69,6 +71,7 @@ func navigateAndWaitFor(url string, eventName string) chromedp.ActionFunc {
 	}
 }
 
+// waitFor listens for events in chromedp and stop loading as soon as given event is match
 func waitFor(ctx context.Context, eventName string) error {
 	timeout := ctx.Value("timeout").(int)
 	cctx, cancel := context.WithTimeout(ctx, time.Duration(timeout)*time.Second)
