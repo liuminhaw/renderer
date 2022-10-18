@@ -27,3 +27,25 @@ Context values:
 
 ### Example
 See usage example at [manualTests](manualTests/render/main.go)
+
+#### Build Example / Test
+```bash
+go build -o render.test
+```
+
+#### Run Example / Test
+```
+Usage of ./render.test:
+  -bHeight int
+        height of browser window's size (default 1080)
+  -bWidth int
+        width of browser window's size (default 1920)
+  -headless
+        automation browser execution mode (default true)
+  -idleType string
+        how to determine loading idle and return, valid input: networkIdle, InteractiveTime (default "networkIdle")
+  -imageLoad
+        indicate if load image when rendering
+  -timeout int
+        seconds before timeout when rendering (default 30)
+```
