@@ -24,6 +24,9 @@ func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 	idleType := "networkIdle"
 
 	if v, ok := ctx.Value("idleType").(string); ok {
+		if v != "networkIdle" && v != "InteractiveTime" {
+			return nil, errors.New(fmt.Sprintf("Invalid idleType: %s", v))
+		}
 		idleType = v
 	}
 
