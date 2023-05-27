@@ -18,6 +18,8 @@ func main() {
 	imageLoad := flag.Bool("imageLoad", false, "indicate if load image when rendering")
 	idleType := flag.String("idleType", "networkIdle",
 		"how to determine loading idle and return, valid input: networkIdle, InteractiveTime")
+	skipFrameCount := flag.Int("skipFrameCount", 0,
+		"skip first n frames with same id as init frame, only valid with idleType=networkIdle")
 	flag.Parse()
 
 	if *browserWidth <= 0 || *browserHeight <= 0 {
@@ -26,6 +28,10 @@ func main() {
 	}
 	if *idleType != "networkIdle" && *idleType != "InteractiveTime" {
 		fmt.Println("Valid idleType value: networkIdle, InteractiveTime")
+		os.Exit(1)
+	}
+	if *skipFrameCount < 0 {
+		fmt.Println("skipFrameCount should be greater than or equal to 0")
 		os.Exit(1)
 	}
 	if len(flag.Args()) != 1 {
@@ -41,6 +47,7 @@ func main() {
 	ctx = context.WithValue(ctx, "timeout", *timeout)
 	ctx = context.WithValue(ctx, "imageLoad", *imageLoad)
 	ctx = context.WithValue(ctx, "idleType", *idleType)
+	ctx = context.WithValue(ctx, "skipFrameCount", *skipFrameCount)
 
 	context, err := renderer.RenderPage(ctx, url)
 	if err != nil {
