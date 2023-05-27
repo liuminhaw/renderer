@@ -24,6 +24,9 @@ Context values:
 - `idleType`: Method to detemine render is complete
     - Type: string (valid values: networkIdle, InteractiveTime)
     - Default: networkIdle
+- `skipFrameCount`: Skip first n framces with same id as init frame, only valid with idleType=networkIdle (Use on page with protection like CloudFlare)
+    - Type: Int
+    - Default: 0
 
 ### Example
 See usage example at [manualTests](manualTests/render/main.go)
@@ -46,6 +49,8 @@ Usage of ./render.test:
         how to determine loading idle and return, valid input: networkIdle, InteractiveTime (default "networkIdle")
   -imageLoad
         indicate if load image when rendering
+  -skipFrameCount int
+        skip first n frames with same id as init frame, only valid with idleType=networkIdle
   -timeout int
         seconds before timeout when rendering (default 30)
 ```
