@@ -12,9 +12,11 @@ import (
 )
 
 type networkIdle struct {
-	navigateFrame bool
-	frameId       string
-	idleCount     int
+	navigateFrame  bool
+	frameId        string
+	idleCount      int
+	skipFrameCount int
+	frameCount     int
 }
 
 // RenderPage rendered given url in browser and returns result html content
@@ -25,7 +27,7 @@ func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 
 	if v, ok := ctx.Value("idleType").(string); ok {
 		if v != "networkIdle" && v != "InteractiveTime" {
-			return nil, errors.New(fmt.Sprintf("Invalid idleType: %s", v))
+			return nil, fmt.Errorf(fmt.Sprintf("invalid idleType: %s", v))
 		}
 		idleType = v
 	}
@@ -106,9 +108,15 @@ func waitFor(ctx context.Context, waitType string) error {
 	}
 	cctx, cancel := context.WithTimeout(ctx, time.Duration(timeout)*time.Second)
 
+	var skipFrameCount = 0
+	if c, ok := ctx.Value("skipFrameCount").(int); ok {
+		skipFrameCount = c
+	}
 	idleCheck := networkIdle{
-		navigateFrame: false,
-		idleCount:     0,
+		navigateFrame:  false,
+		idleCount:      0,
+		frameCount:     0,
+		skipFrameCount: skipFrameCount,
 	}
 	chromedp.ListenTarget(cctx, func(ev interface{}) {
 		switch e := ev.(type) {
@@ -154,9 +162,20 @@ func waitFor(ctx context.Context, waitType string) error {
 // as the first frame id from EventFrameNavigated
 func isNetworkIdle(n *networkIdle, e *page.EventLifecycleEvent) bool {
 	if e.Name == "networkIdle" && n.navigateFrame {
+		// fmt.Printf("Idle count: %d, Frame id: %s\n", n.idleCount, n.frameId)
 		// fmt.Printf("Event name: %s, Frame ID: %s\n", e.Name, e.FrameID)
 		n.idleCount--
-		return n.idleCount == 0 || n.frameId == e.FrameID.String()
+		var frameCountExit = false
+		if n.frameId == e.FrameID.String() {
+			switch n.frameCount < n.skipFrameCount {
+			case true:
+				n.frameCount++
+			case false:
+				frameCountExit = true
+			}
+		}
+		return n.idleCount == 0 || frameCountExit
+		// return n.idleCount == 0
 	}
 
 	return false
@@ -165,7 +184,7 @@ func isNetworkIdle(n *networkIdle, e *page.EventLifecycleEvent) bool {
 // isInteractiveTime check if life cycle have met InteractiveTime event.
 func isInteractiveTime(e *page.EventLifecycleEvent) bool {
 	// if e.Name == "InteractiveTime" {
-	// fmt.Printf("Event name: %s, Frame ID: %s\n", e.Name, e.FrameID)
+	// 	fmt.Printf("Event name: %s, Frame ID: %s\n", e.Name, e.FrameID)
 	// }
 	return e.Name == "InteractiveTime"
 }
