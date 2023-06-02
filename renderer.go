@@ -12,9 +12,9 @@ import (
 )
 
 type networkIdle struct {
-	navigateFrame  bool
-	frameId        string
-	idleCount      int
+	navigateFrame bool
+	frameId       string
+	// idleCount      int
 	skipFrameCount int
 	frameCount     int
 }
@@ -113,20 +113,20 @@ func waitFor(ctx context.Context, waitType string) error {
 		skipFrameCount = c
 	}
 	idleCheck := networkIdle{
-		navigateFrame:  false,
-		idleCount:      0,
+		navigateFrame: false,
+		// idleCount:      0,
 		frameCount:     0,
 		skipFrameCount: skipFrameCount,
 	}
 	chromedp.ListenTarget(cctx, func(ev interface{}) {
 		switch e := ev.(type) {
 		case *page.EventFrameNavigated:
-			// fmt.Printf("Navigate ID: %s, Frame ID: %s\n", e.Type, e.Frame.ID)
+			fmt.Printf("Navigate ID: %s, Frame ID: %s\n", e.Type, e.Frame.ID)
 			if !idleCheck.navigateFrame {
 				idleCheck.frameId = e.Frame.ID.String()
 			}
 			idleCheck.navigateFrame = true
-			idleCheck.idleCount++
+			// idleCheck.idleCount++
 		case *page.EventLifecycleEvent:
 			switch waitType {
 			case "networkIdle":
@@ -164,7 +164,7 @@ func isNetworkIdle(n *networkIdle, e *page.EventLifecycleEvent) bool {
 	if e.Name == "networkIdle" && n.navigateFrame {
 		// fmt.Printf("Idle count: %d, Frame id: %s\n", n.idleCount, n.frameId)
 		// fmt.Printf("Event name: %s, Frame ID: %s\n", e.Name, e.FrameID)
-		n.idleCount--
+		// n.idleCount--
 		var frameCountExit = false
 		if n.frameId == e.FrameID.String() {
 			switch n.frameCount < n.skipFrameCount {
@@ -174,7 +174,7 @@ func isNetworkIdle(n *networkIdle, e *page.EventLifecycleEvent) bool {
 				frameCountExit = true
 			}
 		}
-		return n.idleCount == 0 || frameCountExit
+		return frameCountExit
 		// return n.idleCount == 0
 	}
 
