@@ -40,14 +40,18 @@ func main() {
 	}
 	url := flag.Arg(0)
 
+	rendererContext := renderer.RendererContext{
+		Headless:       *headless,
+		WindowWidth:    *browserWidth,
+		WindowHeight:   *browserHeight,
+		Timeout:        *timeout,
+		ImageLoad:      *imageLoad,
+		IdleType:       *idleType,
+		SkipFrameCount: *skipFrameCount,
+	}
+
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, "headless", *headless)
-	ctx = context.WithValue(ctx, "windowWidth", *browserWidth)
-	ctx = context.WithValue(ctx, "windowHeight", *browserHeight)
-	ctx = context.WithValue(ctx, "timeout", *timeout)
-	ctx = context.WithValue(ctx, "imageLoad", *imageLoad)
-	ctx = context.WithValue(ctx, "idleType", *idleType)
-	ctx = context.WithValue(ctx, "skipFrameCount", *skipFrameCount)
+	ctx = renderer.WithRendererContext(ctx, &rendererContext)
 
 	context, err := renderer.RenderPage(ctx, url)
 	if err != nil {
@@ -64,5 +68,4 @@ func main() {
 	defer f.Close()
 
 	f.Write(context)
-
 }
