@@ -5,10 +5,10 @@ Golang module for executing url rendering with chromedp
 chrome browser installed on host
 
 ## Renderer
-Context values:
+RendererContext values:
 - `headless`: Browser execution mode
     - Type: bool
-    - Default: true
+    - Default: false
 - `windowWidth`: Width of browser's window size
     - Type: Int
     - Default: 1000
@@ -20,7 +20,7 @@ Context values:
     - Default: 30
 - `imageLoad`: Load image when rendering 
     - Type: bool
-    - Default: true
+    - Default: false
 - `idleType`: Method to detemine render is complete
     - Type: string (valid values: networkIdle, InteractiveTime)
     - Default: networkIdle
@@ -29,7 +29,7 @@ Context values:
     - Default: 0
 
 ### Example
-See usage example at [manualTests](manualTests/render/main.go)
+See usage example at [examples](examples/render/main.go)
 
 #### Build Example / Test
 ```bash
