@@ -9,10 +9,6 @@ jobs:
   pack_and_release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          path: checkout-dest
       - name: Release
         uses: docker://antonyurchenko/git-release:v5
         env:
