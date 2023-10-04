@@ -4,11 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/chromedp/cdproto/dom"
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
+)
+
+const (
+	defaultIdleType string = "networkIdle"
+	defaultTimeout  int    = 30
 )
 
 type networkIdle struct {
@@ -18,12 +24,51 @@ type networkIdle struct {
 	frameCount     int
 }
 
+// RenderPdf turns given url page into pdf and return result
+func RenderPdf(ctx context.Context, urlStr string) ([]byte, error) {
+	idleType := defaultIdleType
+	pdfParams := page.PrintToPDF()
+
+	pdfContext, _ := GetPdfContext(ctx)
+	if pdfContext != nil {
+		pdfParams = setPdfParams(pdfContext)
+		switch pdfContext.IdleType {
+		case "":
+			idleType = defaultIdleType
+		case "networkIdle", "InteractiveTime":
+			idleType = pdfContext.IdleType
+		default:
+			return nil, fmt.Errorf("render pdf: invalid idleType %s", pdfContext.IdleType)
+		}
+	}
+
+	start := time.Now()
+	ctx, cancel := chromedp.NewContext(ctx)
+	defer cancel()
+
+	var res []byte
+	err := chromedp.Run(ctx,
+		navigateAndWaitFor(urlStr, idleType),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			buf, _, err := pdfParams.Do(ctx)
+			if err != nil {
+				return fmt.Errorf("renderPdf(%v): %w", urlStr, err)
+			}
+			res = buf
+			return nil
+		}),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("chromedp run: %w", err)
+	}
+
+	duration := time.Since(start)
+	fmt.Printf("Render time: %v\n", duration)
+	return res, nil
+}
+
 // RenderPage rendered given url in browser and returns result html content
 func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
-	// fmt.Printf("ctx headless: %v\n", ctx.Value("headless"))
-	// windowWidth, windowHeight := 1000, 1000
-	// idleType := "networkIdle"
-
 	rendererContext, err := GetRendererContext(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("render page: %w", err)
@@ -105,18 +150,18 @@ func navigateAndWaitFor(url string, waitType string) chromedp.ActionFunc {
 
 // waitFor listens for events in chromedp and stop loading as soon as given event is match
 func waitFor(ctx context.Context, waitType string) error {
+	var skipFrameCount int
+	var timeout int = defaultTimeout
+
 	rendererContext, err := GetRendererContext(ctx)
-	if err != nil {
-		return fmt.Errorf("wait for: %w", err)
-	}
-
-	var timeout int = 30
-	if rendererContext.Timeout != 0 {
+	if errors.Is(err, ErrRendererContextNotFound) {
+		fmt.Println("wait for: renderer context not found, use default value")
+	} else if err == nil {
 		timeout = rendererContext.Timeout
+		skipFrameCount = rendererContext.SkipFrameCount
 	}
-	cctx, cancel := context.WithTimeout(ctx, time.Duration(timeout)*time.Second)
 
-	skipFrameCount := rendererContext.SkipFrameCount
+	cctx, cancel := context.WithTimeout(ctx, time.Duration(timeout)*time.Second)
 
 	idleCheck := networkIdle{
 		navigateFrame:  false,
@@ -189,4 +234,24 @@ func isInteractiveTime(e *page.EventLifecycleEvent) bool {
 	// 	fmt.Printf("Event name: %s, Frame ID: %s\n", e.Name, e.FrameID)
 	// }
 	return e.Name == "InteractiveTime"
+}
+
+// setPdfParams read PDF context input and output PrintToPDFParams
+// according to context settings
+func setPdfParams(pc *PdfContext) *page.PrintToPDFParams {
+	return &page.PrintToPDFParams{
+		Landscape:           pc.Landscape,
+		DisplayHeaderFooter: pc.DisplayHeaderFooter,
+		PaperWidth:          cmToInch(pc.PaperWidthCm),
+		PaperHeight:         cmToInch(pc.PaperHeightCm),
+		MarginTop:           cmToInch(pc.MarginTopCm),
+		MarginBottom:        cmToInch(pc.MarginBottomCm),
+		MarginLeft:          cmToInch(pc.MarginLeftCm),
+		MarginRight:         cmToInch(pc.MarginRightCm),
+	}
+}
+
+// cmToInch convert centimeter input to inch with two decimal precision
+func cmToInch(cm float64) float64 {
+	return math.Round((cm/2.54)*100) / 100
 }

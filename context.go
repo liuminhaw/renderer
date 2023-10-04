@@ -9,10 +9,12 @@ type key string
 
 const (
 	rendererKey key = "renderContext"
+	pdfKey      key = "pdfContext"
 )
 
 var (
 	ErrRendererContextNotFound = errors.New("renderer context not found")
+	ErrPdfContextNotFound      = errors.New("pdf context not found")
 )
 
 type RendererContext struct {
@@ -38,4 +40,31 @@ func GetRendererContext(ctx context.Context) (*RendererContext, error) {
 	}
 
 	return rendererContext, nil
+}
+
+type PdfContext struct {
+	Landscape           bool
+	DisplayHeaderFooter bool
+	PaperWidthCm        float64
+	PaperHeightCm       float64
+	MarginTopCm         float64
+	MarginBottomCm      float64
+	MarginLeftCm        float64
+	MarginRightCm       float64
+	IdleType            string
+}
+
+func WithPdfContext(ctx context.Context, pc *PdfContext) context.Context {
+	return context.WithValue(ctx, pdfKey, pc)
+}
+
+func GetPdfContext(ctx context.Context) (*PdfContext, error) {
+	val := ctx.Value(pdfKey)
+
+	pdfContext, ok := val.(*PdfContext)
+	if !ok {
+		return nil, ErrPdfContextNotFound
+	}
+
+	return pdfContext, nil
 }
