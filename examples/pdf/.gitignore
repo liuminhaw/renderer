@@ -1,0 +1,5 @@
+# Testing result destination
+result/
+
+# Executable
+*.out
