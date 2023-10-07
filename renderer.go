@@ -155,7 +155,7 @@ func waitFor(ctx context.Context, waitType string) error {
 
 	rendererContext, err := GetRendererContext(ctx)
 	if errors.Is(err, ErrRendererContextNotFound) {
-		fmt.Println("wait for: renderer context not found, use default value")
+		fmt.Println("wait for: renderer context not set, use default value")
 	} else if err == nil {
 		timeout = rendererContext.Timeout
 		skipFrameCount = rendererContext.SkipFrameCount
@@ -239,6 +239,22 @@ func isInteractiveTime(e *page.EventLifecycleEvent) bool {
 // setPdfParams read PDF context input and output PrintToPDFParams
 // according to context settings
 func setPdfParams(pc *PdfContext) *page.PrintToPDFParams {
+	// Default value for parameters if not set
+	if pc.PaperWidthCm == 0 {
+		pc.PaperWidthCm = 21
+	}
+	if pc.PaperHeightCm == 0 {
+		pc.PaperHeightCm = 29.7
+	}
+	if pc.DisplayHeaderFooter {
+		if pc.MarginTopCm == 0 {
+			pc.MarginTopCm = 1
+		}
+		if pc.MarginBottomCm == 0 {
+			pc.MarginBottomCm = 1
+		}
+	}
+
 	return &page.PrintToPDFParams{
 		Landscape:           pc.Landscape,
 		DisplayHeaderFooter: pc.DisplayHeaderFooter,
