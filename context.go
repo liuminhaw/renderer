@@ -17,6 +17,7 @@ var (
 	ErrPdfContextNotFound      = errors.New("pdf context not found")
 )
 
+// RendererContext is use for renderer settings
 type RendererContext struct {
 	Headless       bool
 	WindowWidth    int
@@ -27,10 +28,14 @@ type RendererContext struct {
 	SkipFrameCount int
 }
 
+// WithRendererContext add RendererContext with rendererKey to context and return
+// new context value
 func WithRendererContext(ctx context.Context, rc *RendererContext) context.Context {
 	return context.WithValue(ctx, rendererKey, rc)
 }
 
+// GetRendererContext read and return RendererContext from input context
+// ErrRendererContextNotFound is returned if rendererKey not exist
 func GetRendererContext(ctx context.Context) (*RendererContext, error) {
 	val := ctx.Value(rendererKey)
 
@@ -42,6 +47,7 @@ func GetRendererContext(ctx context.Context) (*RendererContext, error) {
 	return rendererContext, nil
 }
 
+// PdfContext is use for print PDF settings
 type PdfContext struct {
 	Landscape           bool
 	DisplayHeaderFooter bool
@@ -54,10 +60,14 @@ type PdfContext struct {
 	IdleType            string
 }
 
+// WithPdfContext add PdfContext with pdfKey to context and return
+// new context value
 func WithPdfContext(ctx context.Context, pc *PdfContext) context.Context {
 	return context.WithValue(ctx, pdfKey, pc)
 }
 
+// GetPdfContext read and return PdfContext from input context
+// ErrPdfContextNotFound is returned if pdfKey not exist
 func GetPdfContext(ctx context.Context) (*PdfContext, error) {
 	val := ctx.Value(pdfKey)
 
