@@ -6,27 +6,30 @@ chrome browser installed on host
 
 ## Renderer
 RendererContext values:
-- `headless`: Browser execution mode
+- `Headless`: Browser execution mode
     - Type: bool
     - Default: false
-- `windowWidth`: Width of browser's window size
+- `WindowWidth`: Width of browser's window size
     - Type: Int
     - Default: 1000
-- `windowHeight`: Height of browser's window size
+- `WindowHeight`: Height of browser's window size
     - Type: Int
     - Default: 1000
-- `timeout`: Seconds before rendering timeout
+- `Timeout`: Seconds before rendering timeout
     - Type: Int
     - Default: 30
-- `imageLoad`: Load image when rendering 
+- `ImageLoad`: Load image when rendering 
     - Type: bool
     - Default: false
-- `idleType`: Method to detemine render is complete
+- `IdleType`: Method to detemine render is complete
     - Type: string (valid values: networkIdle, InteractiveTime)
     - Default: networkIdle
-- `skipFrameCount`: Skip first n framces with same id as init frame, only valid with idleType=networkIdle (Use on page with protection like CloudFlare)
+- `SkipFrameCount`: Skip first n framces with same id as init frame, only valid with idleType=networkIdle (Use on page with protection like CloudFlare)
     - Type: Int
     - Default: 0
+- `BrowserExecPath`: Manually set chrome / chromium browser's executable path
+    - Type: String
+    - Default: Empty string (Auto detect)
 
 ### Example
 See usage example at [examples](examples/render/main.go)
@@ -38,11 +41,13 @@ go build -o render.out
 
 #### Run Example / Test
 ```
-Usage of ./render.out:
+Usage of ./render:
   -bHeight int
       height of browser window's size (default 1080)
   -bWidth int
       width of browser window's size (default 1920)
+  -browserPath string
+      manually set browser executable path
   -headless
       automation browser execution mode (default true)
   -idleType string
@@ -81,9 +86,12 @@ PdfContext values:
 - `MarginRigthCm`: Right margin in centimeter
     - Type: float64
     - Default: 1
-- `idleType`: Method to detemine render is complete
+- `IdleType`: Method to detemine render is complete
     - Type: string (valid values: networkIdle, InteractiveTime)
     - Default: networkIdle
+- `BrowserExecPath`: Manually set chrome / chromium browser's executable path
+    - Type: String
+    - Default: Empty string (Auto detect)
 
 ### Example
 See usage example at [examples](examples/pdf/main.go)
@@ -96,24 +104,26 @@ go build -o pdf.out
 #### Run Example / Test
 ```
 Usage of ./pdf.out:
-  -landscape bool
-      create pdf in landscape layout (default false)
-  -headerFooter bool
-      show header and footer (default false)
-  -paperWidth float
-      paper width in centimeter (default 21, A4 size)
-  -paperHeight float
-      paper height in centimeter (default 29.7, A4 size)
-  -marginTop float
-      top margin in centimeter (default 1)
+  -browserPath string
+      manually set browser executable path
+  -headerFooter
+      show header and footer
+  -idleType string
+      how to determine loading idle and return, valid input: networkIdle, InteractiveTime (default "networkIdle")
+  -landscape
+      create pdf in landscape layout
   -marginBottom float
       bottom margin in centimeter (default 1)
   -marginLeft float
       left margin in centimeter (default 1)
-  -marginRigth float
+  -marginRight float
       right margin in centimeter (default 1)
-  -idleType networkIdle|InteractiveTime
-      how to determiine loading idle and return (default networkIdle)
+  -marginTop float
+      top margin in centimeter (default 1)
+  -paperHeight float
+      paper height in centimeter
+  -paperWidth float
+      paper width in centimeter
 ```
 
 
