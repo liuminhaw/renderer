@@ -21,6 +21,7 @@ func main() {
 	marginRight := flag.Float64("marginRight", 1, "right margin in centimeter")
 	idleType := flag.String("idleType", "networkIdle",
 		"how to determine loading idle and return, valid input: networkIdle, InteractiveTime")
+	browserExecPath := flag.String("browserPath", "", "manually set browser executable path")
 	flag.Parse()
 
 	if *paperWidth < 0 || *paperHeight < 0 {
@@ -51,6 +52,7 @@ func main() {
 		MarginLeftCm:        *marginLeft,
 		MarginRightCm:       *marginRight,
 		IdleType:            *idleType,
+		BrowserExecPath:     *browserExecPath,
 	}
 
 	ctx := context.Background()

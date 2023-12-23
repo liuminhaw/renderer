@@ -20,6 +20,7 @@ func main() {
 		"how to determine loading idle and return, valid input: networkIdle, InteractiveTime")
 	skipFrameCount := flag.Int("skipFrameCount", 0,
 		"skip first n frames with same id as init frame, only valid with idleType=networkIdle")
+	browserExecPath := flag.String("browserPath", "", "manually set browser executable path")
 	flag.Parse()
 
 	if *browserWidth <= 0 || *browserHeight <= 0 {
@@ -41,13 +42,14 @@ func main() {
 	url := flag.Arg(0)
 
 	rendererContext := renderer.RendererContext{
-		Headless:       *headless,
-		WindowWidth:    *browserWidth,
-		WindowHeight:   *browserHeight,
-		Timeout:        *timeout,
-		ImageLoad:      *imageLoad,
-		IdleType:       *idleType,
-		SkipFrameCount: *skipFrameCount,
+		Headless:        *headless,
+		WindowWidth:     *browserWidth,
+		WindowHeight:    *browserHeight,
+		Timeout:         *timeout,
+		ImageLoad:       *imageLoad,
+		IdleType:        *idleType,
+		SkipFrameCount:  *skipFrameCount,
+		BrowserExecPath: *browserExecPath,
 	}
 
 	ctx := context.Background()

@@ -19,13 +19,14 @@ var (
 
 // RendererContext is use for renderer settings
 type RendererContext struct {
-	Headless       bool
-	WindowWidth    int
-	WindowHeight   int
-	Timeout        int
-	ImageLoad      bool
-	IdleType       string
-	SkipFrameCount int
+	Headless        bool
+	WindowWidth     int
+	WindowHeight    int
+	Timeout         int
+	ImageLoad       bool
+	IdleType        string
+	SkipFrameCount  int
+	BrowserExecPath string
 }
 
 // WithRendererContext add RendererContext with rendererKey to context and return
@@ -58,6 +59,7 @@ type PdfContext struct {
 	MarginLeftCm        float64
 	MarginRightCm       float64
 	IdleType            string
+	BrowserExecPath     string
 }
 
 // WithPdfContext add PdfContext with pdfKey to context and return
