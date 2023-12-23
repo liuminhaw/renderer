@@ -42,8 +42,15 @@ func RenderPdf(ctx context.Context, urlStr string) ([]byte, error) {
 		}
 	}
 
+	var opts = chromedp.DefaultExecAllocatorOptions[:]
+	if pdfContext.BrowserExecPath != "" {
+		opts = append(opts, chromedp.ExecPath(pdfContext.BrowserExecPath))
+	}
+
 	start := time.Now()
-	ctx, cancel := chromedp.NewContext(ctx)
+	ctx, cancel := chromedp.NewExecAllocator(ctx, opts...)
+	defer cancel()
+	ctx, cancel = chromedp.NewContext(ctx)
 	defer cancel()
 
 	var res []byte
@@ -100,6 +107,9 @@ func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 	)
 	opts = append(opts, chromedp.WindowSize(windowWidth, windowHeight))
 
+	if rendererContext.BrowserExecPath != "" {
+		opts = append(opts, chromedp.ExecPath(rendererContext.BrowserExecPath))
+	}
 	// fmt.Printf("Rendering: %s\n", urlStr)
 
 	start := time.Now()
