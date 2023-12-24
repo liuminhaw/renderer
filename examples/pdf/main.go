@@ -22,6 +22,7 @@ func main() {
 	idleType := flag.String("idleType", "networkIdle",
 		"how to determine loading idle and return, valid input: networkIdle, InteractiveTime")
 	browserExecPath := flag.String("browserPath", "", "manually set browser executable path")
+	sandbox := flag.Bool("sandbox", true, "indicate if using sandbox for isolating browser process")
 	flag.Parse()
 
 	if *paperWidth < 0 || *paperHeight < 0 {
@@ -53,6 +54,7 @@ func main() {
 		MarginRightCm:       *marginRight,
 		IdleType:            *idleType,
 		BrowserExecPath:     *browserExecPath,
+		NoSandbox:           !*sandbox,
 	}
 
 	ctx := context.Background()
