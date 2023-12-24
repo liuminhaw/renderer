@@ -30,6 +30,9 @@ RendererContext values:
 - `BrowserExecPath`: Manually set chrome / chromium browser's executable path
     - Type: String
     - Default: Empty string (Auto detect)
+- `NoSandbox`: Set to disable using sandbox for isolating browser process (usually use in docker container or AWS lambda)
+    - Type: bool
+    - Default: false
 
 ### Example
 See usage example at [examples](examples/render/main.go)
@@ -54,6 +57,8 @@ Usage of ./render:
       how to determine loading idle and return, valid input: networkIdle, InteractiveTime (default "networkIdle")
   -imageLoad
       indicate if load image when rendering
+  -sandbox
+      indicate if using sandbox for isolating browser process (default true)
   -skipFrameCount int
       skip first n frames with same id as init frame, only valid with idleType=networkIdle
   -timeout int
@@ -92,6 +97,9 @@ PdfContext values:
 - `BrowserExecPath`: Manually set chrome / chromium browser's executable path
     - Type: String
     - Default: Empty string (Auto detect)
+- `NoSandbox`: Set to disable using sandbox for isolating browser process (usually use in docker container or AWS lambda)
+    - Type: bool
+    - Default: false
 
 ### Example
 See usage example at [examples](examples/pdf/main.go)
@@ -124,6 +132,8 @@ Usage of ./pdf.out:
       paper height in centimeter
   -paperWidth float
       paper width in centimeter
+  -sandbox
+      indicate if using sandbox for isolating browser process (default true)
 ```
 
 
