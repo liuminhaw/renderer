@@ -47,6 +47,11 @@ func RenderPdf(ctx context.Context, urlStr string) ([]byte, error) {
 		opts = append(opts, chromedp.ExecPath(pdfContext.BrowserExecPath))
 	}
 
+	if pdfContext.NoSandbox {
+		fmt.Println("Set NoSandbox config")
+		opts = append(opts, chromedp.NoSandbox)
+	}
+
 	start := time.Now()
 	ctx, cancel := chromedp.NewExecAllocator(ctx, opts...)
 	defer cancel()
@@ -109,6 +114,11 @@ func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 
 	if rendererContext.BrowserExecPath != "" {
 		opts = append(opts, chromedp.ExecPath(rendererContext.BrowserExecPath))
+	}
+
+	if rendererContext.NoSandbox {
+		fmt.Println("Set NoSandbox config")
+		opts = append(opts, chromedp.NoSandbox)
 	}
 	// fmt.Printf("Rendering: %s\n", urlStr)
 

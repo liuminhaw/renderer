@@ -21,6 +21,7 @@ func main() {
 	skipFrameCount := flag.Int("skipFrameCount", 0,
 		"skip first n frames with same id as init frame, only valid with idleType=networkIdle")
 	browserExecPath := flag.String("browserPath", "", "manually set browser executable path")
+	sandbox := flag.Bool("sandbox", true, "indicate if using sandbox for isolating browser process")
 	flag.Parse()
 
 	if *browserWidth <= 0 || *browserHeight <= 0 {
@@ -50,6 +51,7 @@ func main() {
 		IdleType:        *idleType,
 		SkipFrameCount:  *skipFrameCount,
 		BrowserExecPath: *browserExecPath,
+		NoSandbox:       !*sandbox,
 	}
 
 	ctx := context.Background()

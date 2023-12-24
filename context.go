@@ -27,6 +27,7 @@ type RendererContext struct {
 	IdleType        string
 	SkipFrameCount  int
 	BrowserExecPath string
+	NoSandbox       bool
 }
 
 // WithRendererContext add RendererContext with rendererKey to context and return
@@ -60,6 +61,7 @@ type PdfContext struct {
 	MarginRightCm       float64
 	IdleType            string
 	BrowserExecPath     string
+	NoSandbox           bool
 }
 
 // WithPdfContext add PdfContext with pdfKey to context and return
