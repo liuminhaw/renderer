@@ -4,6 +4,21 @@ Golang module for executing url rendering with chromedp
 ## Requirements
 chrome browser installed on host
 
+## Browser
+BrowserContext values:
+- `IdleType`: Method to detemine render is complete
+    - Type: string (valid values: networkIdle, InteractiveTime)
+    - Default: networkIdle
+- `BrowserExecPath`: Manually set chrome / chromium browser's executable path
+    - Type: String
+    - Default: Empty string (Auto detect)
+- `NoSandbox`: Set to disable using sandbox for isolating browser process (usually use in docker container or AWS lambda)
+    - Type: bool
+    - Default: false
+- `DebugMode`: Output debug message if set to true
+    - Type: bool
+    - Default: false
+
 ## Renderer
 RendererContext values:
 - `Headless`: Browser execution mode
@@ -21,18 +36,9 @@ RendererContext values:
 - `ImageLoad`: Load image when rendering 
     - Type: bool
     - Default: false
-- `IdleType`: Method to detemine render is complete
-    - Type: string (valid values: networkIdle, InteractiveTime)
-    - Default: networkIdle
 - `SkipFrameCount`: Skip first n framces with same id as init frame, only valid with idleType=networkIdle (Use on page with protection like CloudFlare)
     - Type: Int
     - Default: 0
-- `BrowserExecPath`: Manually set chrome / chromium browser's executable path
-    - Type: String
-    - Default: Empty string (Auto detect)
-- `NoSandbox`: Set to disable using sandbox for isolating browser process (usually use in docker container or AWS lambda)
-    - Type: bool
-    - Default: false
 
 ### Example
 See usage example at [examples](examples/render/main.go)
@@ -46,23 +52,25 @@ go build -o render.out
 ```
 Usage of ./render:
   -bHeight int
-      height of browser window's size (default 1080)
+    	height of browser window's size (default 1080)
   -bWidth int
-      width of browser window's size (default 1920)
+    	width of browser window's size (default 1920)
   -browserPath string
-      manually set browser executable path
+    	manually set browser executable path
+  -debug
+    	turn on for outputing debug message
   -headless
-      automation browser execution mode (default true)
+    	automation browser execution mode (default true)
   -idleType string
-      how to determine loading idle and return, valid input: networkIdle, InteractiveTime (default "networkIdle")
+    	how to determine loading idle and return, valid input: networkIdle, InteractiveTime (default "networkIdle")
   -imageLoad
-      indicate if load image when rendering
+    	indicate if load image when rendering
   -sandbox
-      indicate if using sandbox for isolating browser process (default true)
+    	indicate if using sandbox for isolating browser process (default true)
   -skipFrameCount int
-      skip first n frames with same id as init frame, only valid with idleType=networkIdle
+    	skip first n frames with same id as init frame, only valid with idleType=networkIdle
   -timeout int
-      seconds before timeout when rendering (default 30)
+    	seconds before timeout when rendering (default 30)
 ```
 
 ## Render PDF
@@ -91,15 +99,6 @@ PdfContext values:
 - `MarginRigthCm`: Right margin in centimeter
     - Type: float64
     - Default: 1
-- `IdleType`: Method to detemine render is complete
-    - Type: string (valid values: networkIdle, InteractiveTime)
-    - Default: networkIdle
-- `BrowserExecPath`: Manually set chrome / chromium browser's executable path
-    - Type: String
-    - Default: Empty string (Auto detect)
-- `NoSandbox`: Set to disable using sandbox for isolating browser process (usually use in docker container or AWS lambda)
-    - Type: bool
-    - Default: false
 
 ### Example
 See usage example at [examples](examples/pdf/main.go)
@@ -111,29 +110,31 @@ go build -o pdf.out
 
 #### Run Example / Test
 ```
-Usage of ./pdf.out:
+Usage of ./pdf:
   -browserPath string
-      manually set browser executable path
+    	manually set browser executable path
+  -debug
+    	turn on for outputing debug message
   -headerFooter
-      show header and footer
+    	show header and footer
   -idleType string
-      how to determine loading idle and return, valid input: networkIdle, InteractiveTime (default "networkIdle")
+    	how to determine loading idle and return, valid input: networkIdle, InteractiveTime (default "networkIdle")
   -landscape
-      create pdf in landscape layout
+    	create pdf in landscape layout
   -marginBottom float
-      bottom margin in centimeter (default 1)
+    	bottom margin in centimeter (default 1)
   -marginLeft float
-      left margin in centimeter (default 1)
+    	left margin in centimeter (default 1)
   -marginRight float
-      right margin in centimeter (default 1)
+    	right margin in centimeter (default 1)
   -marginTop float
-      top margin in centimeter (default 1)
+    	top margin in centimeter (default 1)
   -paperHeight float
-      paper height in centimeter
+    	paper height in centimeter
   -paperWidth float
-      paper width in centimeter
+    	paper width in centimeter
   -sandbox
-      indicate if using sandbox for isolating browser process (default true)
+    	indicate if using sandbox for isolating browser process (default true)
 ```
 
 
