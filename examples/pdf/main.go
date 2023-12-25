@@ -23,6 +23,7 @@ func main() {
 		"how to determine loading idle and return, valid input: networkIdle, InteractiveTime")
 	browserExecPath := flag.String("browserPath", "", "manually set browser executable path")
 	sandbox := flag.Bool("sandbox", true, "indicate if using sandbox for isolating browser process")
+	debug := flag.Bool("debug", false, "turn on for outputing debug message")
 	flag.Parse()
 
 	if *paperWidth < 0 || *paperHeight < 0 {
@@ -43,6 +44,15 @@ func main() {
 	}
 	url := flag.Arg(0)
 
+	// Explicit set browserContext if need to modify settings
+	// otherwise no need to additional set it up
+	browserContext := renderer.BrowserContext{
+		IdleType:        *idleType,
+		BrowserExecPath: *browserExecPath,
+		NoSandbox:       !*sandbox,
+		DebugMode:       *debug,
+	}
+
 	pdfContext := renderer.PdfContext{
 		Landscape:           *landscape,
 		DisplayHeaderFooter: *headerFooter,
@@ -52,12 +62,10 @@ func main() {
 		MarginBottomCm:      *marginBottom,
 		MarginLeftCm:        *marginLeft,
 		MarginRightCm:       *marginRight,
-		IdleType:            *idleType,
-		BrowserExecPath:     *browserExecPath,
-		NoSandbox:           !*sandbox,
 	}
 
 	ctx := context.Background()
+	ctx = renderer.WithBrowserContext(ctx, &browserContext)
 	ctx = renderer.WithPdfContext(ctx, &pdfContext)
 
 	context, err := renderer.RenderPdf(ctx, url)

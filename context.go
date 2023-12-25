@@ -8,26 +8,56 @@ import (
 type key string
 
 const (
+	browserKey  key = "browserContext"
 	rendererKey key = "renderContext"
 	pdfKey      key = "pdfContext"
 )
 
 var (
+	ErrBrowserContextNotFound  = errors.New("browser context not found")
 	ErrRendererContextNotFound = errors.New("renderer context not found")
 	ErrPdfContextNotFound      = errors.New("pdf context not found")
 )
 
-// RendererContext is use for renderer settings
-type RendererContext struct {
-	Headless        bool
-	WindowWidth     int
-	WindowHeight    int
-	Timeout         int
-	ImageLoad       bool
+// BrowserContext is use for general browser settings
+type BrowserContext struct {
 	IdleType        string
-	SkipFrameCount  int
 	BrowserExecPath string
 	NoSandbox       bool
+	DebugMode       bool
+}
+
+// WithBrowserContext add BrowserContext with browserKey to context and return
+// new context value
+func WithBrowserContext(ctx context.Context, bc *BrowserContext) context.Context {
+	return context.WithValue(ctx, browserKey, bc)
+}
+
+// GetBrowserContext read and return BrowserContext from input context
+// ErrBrowserContextNotFound is returned if browserKey not exist
+func GetBrowserContext(ctx context.Context) (*BrowserContext, error) {
+	val := ctx.Value(browserKey)
+
+	browserContext, ok := val.(*BrowserContext)
+	if !ok {
+		return nil, ErrBrowserContextNotFound
+	}
+
+	return browserContext, nil
+}
+
+// RendererContext is use for renderer settings
+type RendererContext struct {
+	Headless     bool
+	WindowWidth  int
+	WindowHeight int
+	Timeout      int
+	ImageLoad    bool
+	// IdleType        string
+	SkipFrameCount int
+	// BrowserExecPath string
+	// NoSandbox       bool
+	// DebugMode       bool
 }
 
 // WithRendererContext add RendererContext with rendererKey to context and return
@@ -59,9 +89,10 @@ type PdfContext struct {
 	MarginBottomCm      float64
 	MarginLeftCm        float64
 	MarginRightCm       float64
-	IdleType            string
-	BrowserExecPath     string
-	NoSandbox           bool
+	// IdleType            string
+	// BrowserExecPath     string
+	// NoSandbox           bool
+	// DebugMode           bool
 }
 
 // WithPdfContext add PdfContext with pdfKey to context and return

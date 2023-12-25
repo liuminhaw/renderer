@@ -22,6 +22,7 @@ func main() {
 		"skip first n frames with same id as init frame, only valid with idleType=networkIdle")
 	browserExecPath := flag.String("browserPath", "", "manually set browser executable path")
 	sandbox := flag.Bool("sandbox", true, "indicate if using sandbox for isolating browser process")
+	debug := flag.Bool("debug", false, "turn on for outputing debug message")
 	flag.Parse()
 
 	if *browserWidth <= 0 || *browserHeight <= 0 {
@@ -42,19 +43,26 @@ func main() {
 	}
 	url := flag.Arg(0)
 
-	rendererContext := renderer.RendererContext{
-		Headless:        *headless,
-		WindowWidth:     *browserWidth,
-		WindowHeight:    *browserHeight,
-		Timeout:         *timeout,
-		ImageLoad:       *imageLoad,
+	// Explicit set browserContext if need to modify settings
+	// otherwise no need to additional set it up
+	browserContext := renderer.BrowserContext{
 		IdleType:        *idleType,
-		SkipFrameCount:  *skipFrameCount,
 		BrowserExecPath: *browserExecPath,
 		NoSandbox:       !*sandbox,
+		DebugMode:       *debug,
+	}
+
+	rendererContext := renderer.RendererContext{
+		Headless:       *headless,
+		WindowWidth:    *browserWidth,
+		WindowHeight:   *browserHeight,
+		Timeout:        *timeout,
+		ImageLoad:      *imageLoad,
+		SkipFrameCount: *skipFrameCount,
 	}
 
 	ctx := context.Background()
+	ctx = renderer.WithBrowserContext(ctx, &browserContext)
 	ctx = renderer.WithRendererContext(ctx, &rendererContext)
 
 	context, err := renderer.RenderPage(ctx, url)
