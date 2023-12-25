@@ -48,16 +48,12 @@ func GetBrowserContext(ctx context.Context) (*BrowserContext, error) {
 
 // RendererContext is use for renderer settings
 type RendererContext struct {
-	Headless     bool
-	WindowWidth  int
-	WindowHeight int
-	Timeout      int
-	ImageLoad    bool
-	// IdleType        string
+	Headless       bool
+	WindowWidth    int
+	WindowHeight   int
+	Timeout        int
+	ImageLoad      bool
 	SkipFrameCount int
-	// BrowserExecPath string
-	// NoSandbox       bool
-	// DebugMode       bool
 }
 
 // WithRendererContext add RendererContext with rendererKey to context and return
@@ -89,10 +85,6 @@ type PdfContext struct {
 	MarginBottomCm      float64
 	MarginLeftCm        float64
 	MarginRightCm       float64
-	// IdleType            string
-	// BrowserExecPath     string
-	// NoSandbox           bool
-	// DebugMode           bool
 }
 
 // WithPdfContext add PdfContext with pdfKey to context and return
