@@ -1,6 +1,6 @@
 module github.com/liuminhaw/renderer
 
-go 1.18
+go 1.21
 
 require (
 	github.com/chromedp/cdproto v0.0.0-20230914224007-a15a36ccbc2e

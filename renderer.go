@@ -29,25 +29,35 @@ func RenderPdf(ctx context.Context, urlStr string) ([]byte, error) {
 	idleType := defaultIdleType
 	pdfParams := page.PrintToPDF()
 
+	browserContext, err := GetBrowserContext(ctx)
+	if err != nil {
+		if errors.Is(err, ErrBrowserContextNotFound) {
+			browserContext = &BrowserContext{}
+			ctx = WithBrowserContext(ctx, browserContext)
+		} else {
+			return nil, fmt.Errorf("render pdf; %w", err)
+		}
+	}
+
 	pdfContext, _ := GetPdfContext(ctx)
 	if pdfContext != nil {
 		pdfParams = setPdfParams(pdfContext)
-		switch pdfContext.IdleType {
+		switch browserContext.IdleType {
 		case "":
 			idleType = defaultIdleType
 		case "networkIdle", "InteractiveTime":
-			idleType = pdfContext.IdleType
+			idleType = browserContext.IdleType
 		default:
-			return nil, fmt.Errorf("render pdf: invalid idleType %s", pdfContext.IdleType)
+			return nil, fmt.Errorf("render pdf: invalid idleType %s", browserContext.IdleType)
 		}
 	}
 
 	var opts = chromedp.DefaultExecAllocatorOptions[:]
-	if pdfContext.BrowserExecPath != "" {
-		opts = append(opts, chromedp.ExecPath(pdfContext.BrowserExecPath))
+	if browserContext.BrowserExecPath != "" {
+		opts = append(opts, chromedp.ExecPath(browserContext.BrowserExecPath))
 	}
 
-	if pdfContext.NoSandbox {
+	if browserContext.NoSandbox {
 		fmt.Println("Set NoSandbox config")
 		opts = append(opts, chromedp.NoSandbox)
 	}
@@ -59,7 +69,7 @@ func RenderPdf(ctx context.Context, urlStr string) ([]byte, error) {
 	defer cancel()
 
 	var res []byte
-	err := chromedp.Run(ctx,
+	err = chromedp.Run(ctx,
 		navigateAndWaitFor(urlStr, idleType),
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			buf, _, err := pdfParams.Do(ctx)
@@ -75,25 +85,35 @@ func RenderPdf(ctx context.Context, urlStr string) ([]byte, error) {
 	}
 
 	duration := time.Since(start)
-	fmt.Printf("Render time: %v\n", duration)
+	debugMessage(browserContext.DebugMode, fmt.Sprintf("Render time: %v", duration))
 	return res, nil
 }
 
 // RenderPage rendered given url in browser and returns result html content
 func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
+	browserContext, err := GetBrowserContext(ctx)
+	if err != nil {
+		if errors.Is(err, ErrBrowserContextNotFound) {
+			browserContext = &BrowserContext{}
+			ctx = WithBrowserContext(ctx, browserContext)
+		} else {
+			return nil, fmt.Errorf("render page; %w", err)
+		}
+	}
+
 	rendererContext, err := GetRendererContext(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("render page: %w", err)
 	}
 
 	var idleType string
-	switch rendererContext.IdleType {
+	switch browserContext.IdleType {
 	case "":
 		idleType = "networkIdle"
 	case "networkIdle", "InteractiveTime":
-		idleType = rendererContext.IdleType
+		idleType = browserContext.IdleType
 	default:
-		return nil, fmt.Errorf("render page: invalid idleType %s", rendererContext.IdleType)
+		return nil, fmt.Errorf("render page: invalid idleType %s", browserContext.IdleType)
 	}
 
 	var windowWidth, windowHeight int = 1000, 1000
@@ -112,11 +132,11 @@ func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 	)
 	opts = append(opts, chromedp.WindowSize(windowWidth, windowHeight))
 
-	if rendererContext.BrowserExecPath != "" {
-		opts = append(opts, chromedp.ExecPath(rendererContext.BrowserExecPath))
+	if browserContext.BrowserExecPath != "" {
+		opts = append(opts, chromedp.ExecPath(browserContext.BrowserExecPath))
 	}
 
-	if rendererContext.NoSandbox {
+	if browserContext.NoSandbox {
 		fmt.Println("Set NoSandbox config")
 		opts = append(opts, chromedp.NoSandbox)
 	}
@@ -152,7 +172,7 @@ func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 	}
 
 	duration := time.Since(start)
-	fmt.Printf("Render time: %v\n", duration)
+	debugMessage(browserContext.DebugMode, fmt.Sprintf("Render time: %v", duration))
 	return []byte(res), nil
 }
 
@@ -173,9 +193,14 @@ func waitFor(ctx context.Context, waitType string) error {
 	var skipFrameCount int
 	var timeout int = defaultTimeout
 
+	browserContext, err := GetBrowserContext(ctx)
+	if err != nil {
+		return fmt.Errorf("wait for: browser context not set")
+	}
+
 	rendererContext, err := GetRendererContext(ctx)
 	if errors.Is(err, ErrRendererContextNotFound) {
-		fmt.Println("wait for: renderer context not set, use default value")
+		debugMessage(browserContext.DebugMode, "wait for: renderer context not set, use default value")
 	} else if err == nil {
 		timeout = rendererContext.Timeout
 		skipFrameCount = rendererContext.SkipFrameCount
@@ -191,7 +216,8 @@ func waitFor(ctx context.Context, waitType string) error {
 	chromedp.ListenTarget(cctx, func(ev interface{}) {
 		switch e := ev.(type) {
 		case *page.EventFrameNavigated:
-			fmt.Printf("Navigate ID: %s, Frame ID: %s\n", e.Type, e.Frame.ID)
+			msg := fmt.Sprintf("Navigate ID: %s, Frame ID: %s", e.Type, e.Frame.ID)
+			debugMessage(browserContext.DebugMode, msg)
 			if !idleCheck.navigateFrame {
 				idleCheck.frameId = e.Frame.ID.String()
 			}
@@ -290,4 +316,11 @@ func setPdfParams(pc *PdfContext) *page.PrintToPDFParams {
 // cmToInch convert centimeter input to inch with two decimal precision
 func cmToInch(cm float64) float64 {
 	return math.Round((cm/2.54)*100) / 100
+}
+
+// debugMessage print out msg if debugMode is true
+func debugMessage(debugMode bool, msg string) {
+	if debugMode {
+		fmt.Printf("%s\n", msg)
+	}
 }
