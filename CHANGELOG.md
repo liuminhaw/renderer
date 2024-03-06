@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.0] - 2024-03-07
+
+### Added
+
+- Add context to run chrome in single-process mode ([#28](https://github.com/liuminhaw/renderer/pull/28))
+
+### Fixed
+
+- Fix timeout default to 0 but not 30 seconds if not explicitly set ([#27](https://github.com/liuminhaw/renderer/pull/27)) 
+
+### Uncategorized
+
 ## [0.6.0] - 2023-12-25
 
 ### Changed
@@ -32,6 +44,8 @@
 - Modify renderer context to use custom type ([#8](https://github.com/liuminhaw/renderer/pull/8))
 
 _:seedling: Initial release._
+
+[0.7.0]: https://github.com/liuminhaw/renderer/releases/tag/v0.7.0
 
 [0.6.0]: https://github.com/liuminhaw/renderer/releases/tag/v0.6.0
 
