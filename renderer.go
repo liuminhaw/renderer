@@ -52,7 +52,7 @@ func RenderPdf(ctx context.Context, urlStr string) ([]byte, error) {
 		}
 	}
 
-	var opts = chromedp.DefaultExecAllocatorOptions[:]
+	opts := chromedp.DefaultExecAllocatorOptions[:]
 	if browserContext.BrowserExecPath != "" {
 		opts = append(opts, chromedp.ExecPath(browserContext.BrowserExecPath))
 	}
@@ -124,7 +124,7 @@ func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 		windowHeight = rendererContext.WindowHeight
 	}
 
-	var opts = chromedp.DefaultExecAllocatorOptions[:]
+	opts := chromedp.DefaultExecAllocatorOptions[:]
 	opts = append(opts, chromedp.Flag("headless", rendererContext.Headless))
 	opts = append(
 		opts,
@@ -200,9 +200,18 @@ func waitFor(ctx context.Context, waitType string) error {
 
 	rendererContext, err := GetRendererContext(ctx)
 	if errors.Is(err, ErrRendererContextNotFound) {
-		debugMessage(browserContext.DebugMode, "wait for: renderer context not set, use default value")
-	} else if err == nil {
-		timeout = rendererContext.Timeout
+		debugMessage(
+			browserContext.DebugMode,
+			"wait for: renderer context not set, use default value",
+		)
+	} else if err != nil {
+		return fmt.Errorf("wait for: get renderer context; %w", err)
+	} else {
+		if rendererContext.Timeout != 0 {
+			timeout = rendererContext.Timeout
+		} else {
+			timeout = defaultTimeout
+		}
 		skipFrameCount = rendererContext.SkipFrameCount
 	}
 
@@ -259,7 +268,7 @@ func isNetworkIdle(n *networkIdle, e *page.EventLifecycleEvent) bool {
 	if e.Name == "networkIdle" && n.navigateFrame {
 		// fmt.Printf("Idle count: %d, Frame id: %s\n", n.idleCount, n.frameId)
 		// fmt.Printf("Event name: %s, Frame ID: %s\n", e.Name, e.FrameID)
-		var frameCountExit = false
+		frameCountExit := false
 		if n.frameId == e.FrameID.String() {
 			switch n.frameCount < n.skipFrameCount {
 			case true:
