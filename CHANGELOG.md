@@ -10,8 +10,6 @@
 
 - Fix timeout default to 0 but not 30 seconds if not explicitly set ([#27](https://github.com/liuminhaw/renderer/pull/27)) 
 
-### Uncategorized
-
 ## [0.6.0] - 2023-12-25
 
 ### Changed
