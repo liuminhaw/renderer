@@ -58,8 +58,13 @@ func RenderPdf(ctx context.Context, urlStr string) ([]byte, error) {
 	}
 
 	if browserContext.NoSandbox {
-		fmt.Println("Set NoSandbox config")
+		debugMessage(browserContext.DebugMode, "Set NoSandbox config")
 		opts = append(opts, chromedp.NoSandbox)
+	}
+
+	if browserContext.SingleProcess {
+		debugMessage(browserContext.DebugMode, "Set SingleProcess config")
+		opts = append(opts, chromedp.Flag("single-process", browserContext.SingleProcess))
 	}
 
 	start := time.Now()
@@ -124,8 +129,8 @@ func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 		windowHeight = rendererContext.WindowHeight
 	}
 
+	var headless bool = rendererContext.Headless
 	opts := chromedp.DefaultExecAllocatorOptions[:]
-	opts = append(opts, chromedp.Flag("headless", rendererContext.Headless))
 	opts = append(
 		opts,
 		chromedp.Flag("blink-settings", fmt.Sprintf("imagesEnbled=%v", rendererContext.ImageLoad)),
@@ -137,10 +142,16 @@ func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 	}
 
 	if browserContext.NoSandbox {
-		fmt.Println("Set NoSandbox config")
+		debugMessage(browserContext.DebugMode, "Set NoSandbox config")
 		opts = append(opts, chromedp.NoSandbox)
 	}
-	// fmt.Printf("Rendering: %s\n", urlStr)
+
+	if browserContext.SingleProcess {
+		debugMessage(browserContext.DebugMode, "Set SingleProcess config")
+		headless = true
+		opts = append(opts, chromedp.Flag("single-process", browserContext.SingleProcess))
+	}
+	opts = append(opts, chromedp.Flag("headless", headless))
 
 	start := time.Now()
 	ctx, cancel := chromedp.NewExecAllocator(ctx, opts...)
