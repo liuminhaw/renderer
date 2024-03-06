@@ -25,6 +25,7 @@ type BrowserContext struct {
 	BrowserExecPath string
 	NoSandbox       bool
 	DebugMode       bool
+	SingleProcess   bool
 }
 
 // WithBrowserContext add BrowserContext with browserKey to context and return
