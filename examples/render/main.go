@@ -21,14 +21,13 @@ func main() {
 	skipFrameCount := flag.Int("skipFrameCount", 0,
 		"skip first n frames with same id as init frame, only valid with idleType=networkIdle")
 	browserExecPath := flag.String("browserPath", "", "manually set browser executable path")
-	singleProcess := flag.Bool(
-		"singleProcess",
+	container := flag.Bool(
+		"container",
 		false,
-		"indicate if using single process for browser (force headless mode to be true)",
+		"indicate if running in container (docker / lambda) environment",
 	)
-	sandbox := flag.Bool("sandbox", true, "indicate if using sandbox for isolating browser process")
-	lambda := flag.Bool("lambda", false, "indicate if running on AWS Lambda environment")
 	debug := flag.Bool("debug", false, "turn on for outputing debug message")
+
 	flag.Parse()
 
 	if *browserWidth <= 0 || *browserHeight <= 0 {
@@ -49,20 +48,12 @@ func main() {
 	}
 	url := flag.Arg(0)
 
-	// Check lambda option
-	if *lambda {
-		*sandbox = false
-		*headless = true
-		*singleProcess = true
-	}
-
 	// Explicit set browserContext if need to modify settings
 	// otherwise no need to additional set it up
 	browserContext := renderer.BrowserContext{
 		IdleType:        *idleType,
 		BrowserExecPath: *browserExecPath,
-		SingleProcess:   *singleProcess,
-		NoSandbox:       !*sandbox,
+		Container:       *container,
 		DebugMode:       *debug,
 	}
 
