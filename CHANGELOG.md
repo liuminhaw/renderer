@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.8.0] - 2024-05-01
+
+### Added
+- Add context to run chrome in container environment (eg. docker / lambda) ([#30](https://github.com/liuminhaw/renderer/pull/30)) (Min-Haw, Liu)
+
+### Removed
+- **Breaking** Remove single-process from context option ([#30](https://github.com/liuminhaw/renderer/pull/30)) (Min-Haw, Liu)
+- **Breaking** Remove no sandbox from context option ([#30](https://github.com/liuminhaw/renderer/pull/30)) (Min-Haw, Liu)
+
 ## [0.7.0] - 2024-03-07
 
 ### Added
@@ -8,7 +17,7 @@
 
 ### Fixed
 
-- Fix timeout default to 0 but not 30 seconds if not explicitly set ([#27](https://github.com/liuminhaw/renderer/pull/27)) 
+- Fix timeout default to 0 but not 30 seconds if not explicitly set ([#27](https://github.com/liuminhaw/renderer/pull/27))
 
 ## [0.6.0] - 2023-12-25
 
@@ -42,6 +51,8 @@
 - Modify renderer context to use custom type ([#8](https://github.com/liuminhaw/renderer/pull/8))
 
 _:seedling: Initial release._
+
+[0.8.0]: https://github.com/liuminhaw/renderer/releases/tag/v0.8.0
 
 [0.7.0]: https://github.com/liuminhaw/renderer/releases/tag/v0.7.0
 
