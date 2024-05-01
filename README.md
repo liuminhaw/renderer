@@ -16,13 +16,8 @@ BrowserContext values:
 - `BrowserExecPath`: Manually set chrome / chromium browser's executable path
   - Type: String
   - Default: Empty string (Auto detect)
-- `NoSandbox`: Set to disable using sandbox for isolating browser process
-  (usually use in docker container or AWS lambda)
-  - Type: bool
-  - Default: false
-- `SingleProcess`: Set to force the browser to run in single process, rather
-  than using separate processes (tested required to work for headless chromium
-  in aws lambda function)
+- `Container`: Use this option to execute chrome / chromium browser in container
+  environment
   - Type: bool
   - Default: false
 - `DebugMode`: Output debug message if set to true
@@ -60,7 +55,7 @@ See usage example at [examples](examples/render/main.go)
 #### Build Example / Test
 
 ```bash
-go build -o render.out
+go build
 ```
 
 #### Run Example / Test
@@ -73,6 +68,8 @@ Usage of ./render:
         width of browser window's size (default 1920)
   -browserPath string
         manually set browser executable path
+  -container
+        indicate if running in container (docker / lambda) environment
   -debug
         turn on for outputing debug message
   -headless
@@ -81,12 +78,6 @@ Usage of ./render:
         how to determine loading idle and return, valid input: networkIdle, InteractiveTime (default "networkIdle")
   -imageLoad
         indicate if load image when rendering
-  -lambda
-        indicate if running on AWS Lambda environment
-  -sandbox
-        indicate if using sandbox for isolating browser process (default true)
-  -singleProcess
-        indicate if using single process for browser (force headless mode to be true)
   -skipFrameCount int
         skip first n frames with same id as init frame, only valid with idleType=networkIdle
   -timeout int
@@ -129,7 +120,7 @@ See usage example at [examples](examples/pdf/main.go)
 #### Build Example / Test
 
 ```bash
-go build -o pdf.out
+go build
 ```
 
 #### Run Example / Test
@@ -138,14 +129,14 @@ go build -o pdf.out
 Usage of ./pdf:
   -browserPath string
         manually set browser executable path
+  -container
+        indicate if running in container (docker / lambda) environment
   -debug
         turn on for outputing debug message
   -headerFooter
         show header and footer
   -idleType string
         how to determine loading idle and return, valid input: networkIdle, InteractiveTime (default "networkIdle")
-  -lambda
-        indicate if running on AWS Lambda environment
   -landscape
         create pdf in landscape layout
   -marginBottom float
@@ -160,8 +151,4 @@ Usage of ./pdf:
         paper height in centimeter
   -paperWidth float
         paper width in centimeter
-  -sandbox
-        indicate if using sandbox for isolating browser process (default true)
-  -singleProcess
-        indicate if using single process for browser (force headless mode to be true)
 ```
