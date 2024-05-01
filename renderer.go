@@ -57,14 +57,15 @@ func RenderPdf(ctx context.Context, urlStr string) ([]byte, error) {
 		opts = append(opts, chromedp.ExecPath(browserContext.BrowserExecPath))
 	}
 
-	if browserContext.NoSandbox {
-		debugMessage(browserContext.DebugMode, "Set NoSandbox config")
-		opts = append(opts, chromedp.NoSandbox)
-	}
-
-	if browserContext.SingleProcess {
-		debugMessage(browserContext.DebugMode, "Set SingleProcess config")
-		opts = append(opts, chromedp.Flag("single-process", browserContext.SingleProcess))
+	if browserContext.Container {
+		debugMessage(browserContext.DebugMode, "Set configuration for container environment")
+		opts = append(opts,
+			chromedp.Flag("disable-setuid-sandbox", true),
+			chromedp.Flag("disable-dev-shm-usage", true),
+			chromedp.Flag("single-process", true),
+			chromedp.Flag("no-zygote", true),
+			chromedp.NoSandbox,
+		)
 	}
 
 	start := time.Now()
@@ -141,16 +142,17 @@ func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 		opts = append(opts, chromedp.ExecPath(browserContext.BrowserExecPath))
 	}
 
-	if browserContext.NoSandbox {
-		debugMessage(browserContext.DebugMode, "Set NoSandbox config")
-		opts = append(opts, chromedp.NoSandbox)
+	if browserContext.Container {
+		debugMessage(browserContext.DebugMode, "Set configuration for container environment")
+		opts = append(opts,
+			chromedp.Flag("disable-setuid-sandbox", true),
+			chromedp.Flag("disable-dev-shm-usage", true),
+			chromedp.Flag("single-process", true),
+			chromedp.Flag("no-zygote", true),
+			chromedp.NoSandbox,
+		)
 	}
 
-	if browserContext.SingleProcess {
-		debugMessage(browserContext.DebugMode, "Set SingleProcess config")
-		headless = true
-		opts = append(opts, chromedp.Flag("single-process", browserContext.SingleProcess))
-	}
 	opts = append(opts, chromedp.Flag("headless", headless))
 
 	start := time.Now()

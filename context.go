@@ -23,9 +23,8 @@ var (
 type BrowserContext struct {
 	IdleType        string
 	BrowserExecPath string
-	NoSandbox       bool
 	DebugMode       bool
-	SingleProcess   bool
+	Container       bool
 }
 
 // WithBrowserContext add BrowserContext with browserKey to context and return
