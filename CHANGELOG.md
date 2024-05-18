@@ -1,11 +1,19 @@
 # Changelog
 
+## [0.9.0] - 2024-05-18
+
+### Added
+
+- Add context to show chromium execution message for debugging ([#34](https://github.com/liuminhaw/renderer/pull/34)) (Min-Haw, Liu)
+
 ## [0.8.0] - 2024-05-01
 
 ### Added
+
 - Add context to run chrome in container environment (eg. docker / lambda) ([#30](https://github.com/liuminhaw/renderer/pull/30)) (Min-Haw, Liu)
 
 ### Removed
+
 - **Breaking** Remove single-process from context option ([#30](https://github.com/liuminhaw/renderer/pull/30)) (Min-Haw, Liu)
 - **Breaking** Remove no sandbox from context option ([#30](https://github.com/liuminhaw/renderer/pull/30)) (Min-Haw, Liu)
 
@@ -51,6 +59,8 @@
 - Modify renderer context to use custom type ([#8](https://github.com/liuminhaw/renderer/pull/8))
 
 _:seedling: Initial release._
+
+[0.9.0]: https://github.com/liuminhaw/renderer/releases/tag/v0.9.0
 
 [0.8.0]: https://github.com/liuminhaw/renderer/releases/tag/v0.8.0
 
