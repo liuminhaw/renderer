@@ -23,6 +23,7 @@ var (
 type BrowserContext struct {
 	IdleType        string
 	BrowserExecPath string
+	ChromiumDebug   bool
 	DebugMode       bool
 	Container       bool
 }

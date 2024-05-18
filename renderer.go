@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"math"
 	"time"
 
@@ -71,7 +72,11 @@ func RenderPdf(ctx context.Context, urlStr string) ([]byte, error) {
 	start := time.Now()
 	ctx, cancel := chromedp.NewExecAllocator(ctx, opts...)
 	defer cancel()
-	ctx, cancel = chromedp.NewContext(ctx)
+	if browserContext.ChromiumDebug {
+		ctx, cancel = chromedp.NewContext(ctx, chromedp.WithDebugf(log.Printf))
+	} else {
+		ctx, cancel = chromedp.NewContext(ctx)
+	}
 	defer cancel()
 
 	var res []byte
@@ -158,7 +163,11 @@ func RenderPage(ctx context.Context, urlStr string) ([]byte, error) {
 	start := time.Now()
 	ctx, cancel := chromedp.NewExecAllocator(ctx, opts...)
 	defer cancel()
-	ctx, cancel = chromedp.NewContext(ctx)
+	if browserContext.ChromiumDebug {
+		ctx, cancel = chromedp.NewContext(ctx, chromedp.WithDebugf(log.Printf))
+	} else {
+		ctx, cancel = chromedp.NewContext(ctx)
+	}
 	defer cancel()
 
 	var res string
@@ -343,6 +352,6 @@ func cmToInch(cm float64) float64 {
 // debugMessage print out msg if debugMode is true
 func debugMessage(debugMode bool, msg string) {
 	if debugMode {
-		fmt.Printf("%s\n", msg)
+		log.Printf("%s\n", msg)
 	}
 }
