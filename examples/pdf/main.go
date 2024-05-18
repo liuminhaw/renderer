@@ -28,6 +28,8 @@ func main() {
 		"indicate if running in container (docker / lambda) environment",
 	)
 	debug := flag.Bool("debug", false, "turn on for outputing debug message")
+	chromiumDebug := flag.Bool("chromiumDebug", false, "turn on for chrome debug message output")
+
 	flag.Parse()
 
 	if *paperWidth < 0 || *paperHeight < 0 {
@@ -54,6 +56,7 @@ func main() {
 		IdleType:        *idleType,
 		BrowserExecPath: *browserExecPath,
 		Container:       *container,
+		ChromiumDebug:   *chromiumDebug,
 		DebugMode:       *debug,
 	}
 
