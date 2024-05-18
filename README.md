@@ -4,7 +4,7 @@ Golang module for executing url rendering with chromedp
 
 ## Requirements
 
-chrome browser installed on host
+chromium / chrome browser installed on host
 
 ## Browser
 
@@ -18,6 +18,9 @@ BrowserContext values:
   - Default: Empty string (Auto detect)
 - `Container`: Use this option to execute chrome / chromium browser in container
   environment
+  - Type: bool
+  - Default: false
+- `ChromiumDebug`: Output debug message on chromium if set to true
   - Type: bool
   - Default: false
 - `DebugMode`: Output debug message if set to true
@@ -55,11 +58,11 @@ See usage example at [examples](examples/render/main.go)
 #### Build Example / Test
 
 ```bash
+cd examples/render
 go build
 ```
 
 #### Run Example / Test
-
 ```
 Usage of ./render:
   -bHeight int
@@ -68,6 +71,8 @@ Usage of ./render:
         width of browser window's size (default 1920)
   -browserPath string
         manually set browser executable path
+  -chromiumDebug
+        turn on for chromium debug message output
   -container
         indicate if running in container (docker / lambda) environment
   -debug
@@ -120,15 +125,17 @@ See usage example at [examples](examples/pdf/main.go)
 #### Build Example / Test
 
 ```bash
+cd examples/pdf
 go build
 ```
 
 #### Run Example / Test
-
 ```
 Usage of ./pdf:
   -browserPath string
         manually set browser executable path
+  -chromiumDebug
+        turn on for chrome debug message output
   -container
         indicate if running in container (docker / lambda) environment
   -debug
