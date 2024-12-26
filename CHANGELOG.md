@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.1] - 2024-12-27
+
+### Changed
+
+- Update dependencies for fixing message `ERROR: could not unmarshal event: parse error` when rendering page ([#37](https://github.com/liuminhaw/renderer/pull/37)) (Min-Haw, Liu)
+
 ## [0.9.0] - 2024-05-18
 
 ### Added
@@ -59,6 +65,8 @@
 - Modify renderer context to use custom type ([#8](https://github.com/liuminhaw/renderer/pull/8))
 
 _:seedling: Initial release._
+
+[0.9.1]: https://github.com/liuminhaw/renderer/releases/tag/v0.9.1
 
 [0.9.0]: https://github.com/liuminhaw/renderer/releases/tag/v0.9.0
 
