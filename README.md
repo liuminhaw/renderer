@@ -64,7 +64,8 @@ go build
 
 #### Run Example / Test
 ```
-Usage of ./render:
+Usage: ./render <url>
+./render url
   -bHeight int
         height of browser window's size (default 1080)
   -bWidth int
@@ -131,7 +132,7 @@ go build
 
 #### Run Example / Test
 ```
-Usage of ./pdf:
+Usage: ./pdf <url>
   -browserPath string
         manually set browser executable path
   -chromiumDebug
