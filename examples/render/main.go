@@ -1,10 +1,9 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/liuminhaw/renderer"
@@ -43,46 +42,52 @@ func main() {
 		fmt.Println("skipFrameCount should be greater than or equal to 0")
 		os.Exit(1)
 	}
+	flag.Parse()
 	if len(flag.Args()) != 1 {
 		fmt.Printf("Usage: %s url\n", os.Args[0])
 		os.Exit(1)
 	}
 	url := flag.Arg(0)
 
-	// Explicit set browserContext if need to modify settings
-	// otherwise no need to additional set it up
-	browserContext := renderer.BrowserContext{
-		IdleType:        *idleType,
-		BrowserExecPath: *browserExecPath,
-		Container:       *container,
-		ChromiumDebug:   *chromiumDebug,
-		DebugMode:       *debug,
+	var logger *slog.Logger
+	if *debug {
+		logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			AddSource: true,
+			Level:     slog.LevelDebug,
+		}))
+	} else {
+		logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
 	}
 
-	rendererContext := renderer.RendererContext{
+	r := renderer.NewRenderer(renderer.WithLogger(logger))
+	context, err := r.RenderPage(url, &renderer.RendererOption{
+		BrowserOpts: renderer.BrowserConf{
+			IdleType:        *idleType,
+			BrowserExecPath: *browserExecPath,
+			Container:       *container,
+			ChromiumDebug:   *chromiumDebug,
+			DebugMode:       *debug,
+		},
 		Headless:       *headless,
 		WindowWidth:    *browserWidth,
 		WindowHeight:   *browserHeight,
 		Timeout:        *timeout,
 		ImageLoad:      *imageLoad,
 		SkipFrameCount: *skipFrameCount,
-	}
-
-	ctx := context.Background()
-	ctx = renderer.WithBrowserContext(ctx, &browserContext)
-	ctx = renderer.WithRendererContext(ctx, &rendererContext)
-
-	context, err := renderer.RenderPage(ctx, url)
+	})
 	if err != nil {
-		log.Fatalf("Render test: %s", err)
+		logger.Error(fmt.Sprintf("Render test: %s", err))
+		os.Exit(1)
 	}
 
 	if err := os.MkdirAll("result", 0775); err != nil {
-		log.Fatalf("Render test: %s", err)
+		logger.Error(fmt.Sprintf("Render test: %s", err))
+		os.Exit(1)
 	}
 	f, err := os.Create("result/result.out")
 	if err != nil {
-		log.Fatalf("Render test: %s", err)
+		logger.Error(fmt.Sprintf("Render test: %s", err))
+		os.Exit(1)
 	}
 	defer f.Close()
 

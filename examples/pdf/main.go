@@ -1,10 +1,9 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/liuminhaw/renderer"
@@ -50,17 +49,26 @@ func main() {
 	}
 	url := flag.Arg(0)
 
-	// Explicit set browserContext if need to modify settings
-	// otherwise no need to additional set it up
-	browserContext := renderer.BrowserContext{
-		IdleType:        *idleType,
-		BrowserExecPath: *browserExecPath,
-		Container:       *container,
-		ChromiumDebug:   *chromiumDebug,
-		DebugMode:       *debug,
+	var logger *slog.Logger
+	if *debug {
+		logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			AddSource: true,
+			Level:     slog.LevelDebug,
+		}))
+	} else {
+		logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
 	}
 
-	pdfContext := renderer.PdfContext{
+	r := renderer.NewRenderer(renderer.WithLogger(logger))
+
+	context, err := r.RenderPdf(url, &renderer.PdfOption{
+		BrowserOpts: renderer.BrowserConf{
+			IdleType:        *idleType,
+			BrowserExecPath: *browserExecPath,
+			Container:       *container,
+			ChromiumDebug:   *chromiumDebug,
+			DebugMode:       *debug,
+		},
 		Landscape:           *landscape,
 		DisplayHeaderFooter: *headerFooter,
 		PaperWidthCm:        *paperWidth,
@@ -69,23 +77,20 @@ func main() {
 		MarginBottomCm:      *marginBottom,
 		MarginLeftCm:        *marginLeft,
 		MarginRightCm:       *marginRight,
-	}
-
-	ctx := context.Background()
-	ctx = renderer.WithBrowserContext(ctx, &browserContext)
-	ctx = renderer.WithPdfContext(ctx, &pdfContext)
-
-	context, err := renderer.RenderPdf(ctx, url)
+	})
 	if err != nil {
-		log.Fatalf("RenderPDf test: %s", err)
+		logger.Error(fmt.Sprintf("RenderPDF test: %s", err))
+		os.Exit(1)
 	}
 
 	if err := os.MkdirAll("result", 0775); err != nil {
-		log.Fatalf("RenderPDF test: %s", err)
+		logger.Error(fmt.Sprintf("RenderPDF test: %s", err))
+		os.Exit(1)
 	}
 	f, err := os.Create("result/result.pdf")
 	if err != nil {
-		log.Fatalf("RenderPDF test: %s", err)
+		logger.Error(fmt.Sprintf("RenderPDF test: %s", err))
+		os.Exit(1)
 	}
 	defer f.Close()
 
