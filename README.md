@@ -6,9 +6,11 @@ Golang module for executing url rendering with chromedp
 
 chromium / chrome browser installed on host
 
-## Browser
+## Options configuration
 
-BrowserContext values:
+### Browser
+
+Browser config values:
 
 - `IdleType`: Method to detemine render is complete
   - Type: string (valid values: networkIdle, InteractiveTime)
@@ -20,17 +22,19 @@ BrowserContext values:
   environment
   - Type: bool
   - Default: false
-- `ChromiumDebug`: Output debug message on chromium if set to true
-  - Type: bool
-  - Default: false
 - `DebugMode`: Output debug message if set to true
   - Type: bool
   - Default: false
+- `ChromiumDebug`: Output debug message on chromium if set to true
+  - Type: bool
+  - Default: false
 
-## Renderer
+### Renderer
 
-RendererContext values:
+Renderer options values:
 
+- `BrowserOpts`: Browser configuration
+  - Type: BrowserConf
 - `Headless`: Browser execution mode
   - Type: bool
   - Default: false
@@ -51,18 +55,21 @@ RendererContext values:
   - Type: Int
   - Default: 0
 
-### Example
+**Note:** Default renderer option `defaultRendererOption` will be used if not set no explicit option is set.
+
+#### Example
 
 See usage example at [examples](examples/render/main.go)
 
-#### Build Example / Test
+**Build Example / Test**
 
 ```bash
 cd examples/render
 go build
 ```
 
-#### Run Example / Test
+**Run Example / Test**
+
 ```
 Usage: ./render <url>
 ./render url
@@ -90,10 +97,12 @@ Usage: ./render <url>
         seconds before timeout when rendering (default 30)
 ```
 
-## Render PDF
+### Render PDF
 
-PdfContext values:
+Pdf options values:
 
+- `BrowserOpts`: Browser configuration
+  - Type: BrowserConf
 - `Landscape`: Set paper orientation to landscape
   - Type: bool
   - Default: false
@@ -119,18 +128,19 @@ PdfContext values:
   - Type: float64
   - Default: 1
 
-### Example
+#### Example
 
 See usage example at [examples](examples/pdf/main.go)
 
-#### Build Example / Test
+**Build Example / Test**
 
 ```bash
 cd examples/pdf
 go build
 ```
 
-#### Run Example / Test
+**Run Example / Test**
+
 ```
 Usage: ./pdf <url>
   -browserPath string
