@@ -78,6 +78,10 @@ func (r *Renderer) RenderPage(urlStr string, opts *RendererOption) ([]byte, erro
 	)
 	chromeOpts = append(chromeOpts, chromedp.WindowSize(opts.WindowWidth, opts.WindowHeight))
 	chromeOpts = append(chromeOpts, chromedp.Flag("headless", opts.Headless))
+	chromeOpts = append(
+		chromeOpts,
+		chromedp.WSURLReadTimeout(time.Duration(opts.Timeout)*time.Second),
+	)
 
 	start := time.Now()
 	ctx, cancel := chromedp.NewExecAllocator(context.Background(), chromeOpts...)
