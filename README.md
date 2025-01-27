@@ -54,6 +54,9 @@ Renderer options values:
   with idleType=networkIdle (Use on page with protection like CloudFlare)
   - Type: Int
   - Default: 0
+- `UserAgent`: Set custom user agent value
+  - Type: string
+  - Default: Empty string (Will user default user agent of the browser)
 
 **Note:** Default renderer option `defaultRendererOption` will be used if not set no explicit option is set.
 
@@ -72,7 +75,6 @@ go build
 
 ```
 Usage: ./render <url>
-./render url
   -bHeight int
         height of browser window's size (default 1080)
   -bWidth int
@@ -95,6 +97,8 @@ Usage: ./render <url>
         skip first n frames with same id as init frame, only valid with idleType=networkIdle
   -timeout int
         seconds before timeout when rendering (default 30)
+  -userAgent string
+        set custom user agent for sending request in automation browser
 ```
 
 ### Render PDF

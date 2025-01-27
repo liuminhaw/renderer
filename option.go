@@ -29,6 +29,7 @@ type RendererOption struct {
 	Timeout        int
 	ImageLoad      bool
 	SkipFrameCount int
+	UserAgent      string
 }
 
 var defaultRendererOption = RendererOption{

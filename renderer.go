@@ -68,6 +68,10 @@ func (r *Renderer) RenderPage(urlStr string, opts *RendererOption) ([]byte, erro
 		)
 	}
 
+	if opts.UserAgent != "" {
+		chromeOpts = append(chromeOpts, chromedp.UserAgent(opts.UserAgent))
+	}
+
 	chromeOpts = append(
 		chromeOpts,
 		chromedp.Flag("blink-settings", fmt.Sprintf("imagesEnbled=%t", opts.ImageLoad)),
@@ -114,7 +118,7 @@ func (r *Renderer) RenderPage(urlStr string, opts *RendererOption) ([]byte, erro
 	return []byte(resp), nil
 }
 
-// RenderPdf generate and return the pdf as byte array from the given url using 
+// RenderPdf generate and return the pdf as byte array from the given url using
 // automated chrome browser. PdfOption is for setting the style of the generated pdf.
 func (r *Renderer) RenderPdf(urlStr string, opts *PdfOption) ([]byte, error) {
 	pdfParams := page.PrintToPDF()
@@ -272,4 +276,3 @@ func (r *Renderer) isInteractiveTime(e *page.EventLifecycleEvent) bool {
 func cmToInch(cm float64) float64 {
 	return math.Round((cm/2.54)*100) / 100
 }
-
