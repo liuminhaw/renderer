@@ -27,6 +27,11 @@ func main() {
 	)
 	debug := flag.Bool("debug", false, "turn on for outputing debug message")
 	chromiumDebug := flag.Bool("chromiumDebug", false, "turn on for chromium debug message output")
+	userAgent := flag.String(
+		"userAgent",
+		"",
+		"set custom user agent for sending request in automation browser",
+	)
 
 	flag.Parse()
 
@@ -74,6 +79,7 @@ func main() {
 		Timeout:        *timeout,
 		ImageLoad:      *imageLoad,
 		SkipFrameCount: *skipFrameCount,
+		UserAgent:      *userAgent,
 	})
 	if err != nil {
 		logger.Error(fmt.Sprintf("Render test: %s", err))
