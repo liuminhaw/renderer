@@ -13,7 +13,7 @@ chromium / chrome browser installed on host
 Browser config values:
 
 - `IdleType`: Method to detemine render is complete
-  - Type: string (valid values: networkIdle, InteractiveTime)
+  - Type: string (valid values: auto, networkIdle, InteractiveTime)
   - Default: networkIdle
 - `BrowserExecPath`: Manually set chrome / chromium browser's executable path
   - Type: String
@@ -90,7 +90,7 @@ Usage: ./render <url>
   -headless
         automation browser execution mode (default true)
   -idleType string
-        how to determine loading idle and return, valid input: networkIdle, InteractiveTime (default "networkIdle")
+        how to determine loading idle and return, valid input: auto, networkIdle, InteractiveTime (default "auto")
   -imageLoad
         indicate if load image when rendering
   -skipFrameCount int
@@ -158,7 +158,7 @@ Usage: ./pdf <url>
   -headerFooter
         show header and footer
   -idleType string
-        how to determine loading idle and return, valid input: networkIdle, InteractiveTime (default "networkIdle")
+        how to determine loading idle and return, valid input: auto, networkIdle, InteractiveTime (default "auto")
   -landscape
         create pdf in landscape layout
   -marginBottom float
