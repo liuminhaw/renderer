@@ -48,8 +48,7 @@ func (r *Renderer) RenderPage(urlStr string, opts *RendererOption) ([]byte, erro
 		opts = &defaultRendererOption
 	}
 
-	if opts.BrowserOpts.IdleType != "networkIdle" &&
-		opts.BrowserOpts.IdleType != "InteractiveTime" {
+	if !IsValidIdleType(opts.BrowserOpts.IdleType) {
 		return nil, fmt.Errorf("invalid idleType %s", opts.BrowserOpts.IdleType)
 	}
 
@@ -132,8 +131,7 @@ func (r *Renderer) RenderPdf(urlStr string, opts *PdfOption) ([]byte, error) {
 		pdfParams = opts.setParams()
 	}
 
-	if opts.BrowserOpts.IdleType != "networkIdle" &&
-		opts.BrowserOpts.IdleType != "InteractiveTime" {
+	if !IsValidIdleType(opts.BrowserOpts.IdleType) {
 		return nil, fmt.Errorf("invalid idleType %s", opts.BrowserOpts.IdleType)
 	}
 
@@ -198,7 +196,8 @@ func (r *Renderer) navigateAndWaitFor(url string, opts *RendererOption) chromedp
 }
 
 // waitFor listens for events in chromedp and stop loading as soon as given event is matched
-// or timeout is reached. Two events are supported currently: networkIdle and InteractiveTime.
+// or timeout is reached.
+// Two events are currently supported: networkIdle and InteractiveTime.
 func (r *Renderer) waitFor(ctx context.Context, opts *RendererOption) error {
 	cctx, cancel := context.WithTimeout(ctx, time.Duration(opts.Timeout)*time.Second)
 
@@ -207,7 +206,7 @@ func (r *Renderer) waitFor(ctx context.Context, opts *RendererOption) error {
 		frameCount:     0,
 		skipFrameCount: opts.SkipFrameCount,
 	}
-	chromedp.ListenTarget(cctx, func(ev interface{}) {
+	chromedp.ListenTarget(cctx, func(ev any) {
 		switch e := ev.(type) {
 		case *page.EventFrameNavigated:
 			msg := fmt.Sprintf("Navigate ID: %s, Frame ID: %s", e.Type, e.Frame.ID)
@@ -224,6 +223,10 @@ func (r *Renderer) waitFor(ctx context.Context, opts *RendererOption) error {
 				}
 			case "InteractiveTime":
 				if r.isInteractiveTime(e) {
+					cancel()
+				}
+			case "auto":
+				if r.isNetworkIdle(&idleCheck, e) || r.isInteractiveTime(e) {
 					cancel()
 				}
 			}

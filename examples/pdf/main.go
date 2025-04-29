@@ -18,8 +18,8 @@ func main() {
 	marginBottom := flag.Float64("marginBottom", 1, "bottom margin in centimeter")
 	marginLeft := flag.Float64("marginLeft", 1, "left margin in centimeter")
 	marginRight := flag.Float64("marginRight", 1, "right margin in centimeter")
-	idleType := flag.String("idleType", "networkIdle",
-		"how to determine loading idle and return, valid input: networkIdle, InteractiveTime")
+	idleType := flag.String("idleType", "auto",
+		"how to determine loading idle and return, valid input: auto, networkIdle, InteractiveTime")
 	browserExecPath := flag.String("browserPath", "", "manually set browser executable path")
 	container := flag.Bool(
 		"container",
@@ -39,7 +39,7 @@ func main() {
 		fmt.Println("Margins value should be greater than 0")
 		os.Exit(1)
 	}
-	if *idleType != "networkIdle" && *idleType != "InteractiveTime" {
+	if !renderer.IsValidIdleType(*idleType) {
 		fmt.Println("Valid idleType value: networkIdle, InteractiveTime")
 		os.Exit(1)
 	}

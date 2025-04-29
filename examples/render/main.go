@@ -15,8 +15,8 @@ func main() {
 	browserHeight := flag.Int("bHeight", 1080, "height of browser window's size")
 	timeout := flag.Int("timeout", 30, "seconds before timeout when rendering")
 	imageLoad := flag.Bool("imageLoad", false, "indicate if load image when rendering")
-	idleType := flag.String("idleType", "networkIdle",
-		"how to determine loading idle and return, valid input: networkIdle, InteractiveTime")
+	idleType := flag.String("idleType", "auto",
+		"how to determine loading idle and return, valid input: auto, networkIdle, InteractiveTime")
 	skipFrameCount := flag.Int("skipFrameCount", 0,
 		"skip first n frames with same id as init frame, only valid with idleType=networkIdle")
 	browserExecPath := flag.String("browserPath", "", "manually set browser executable path")
@@ -39,8 +39,8 @@ func main() {
 		fmt.Println("Browser width / height value should be greater than 0")
 		os.Exit(1)
 	}
-	if *idleType != "networkIdle" && *idleType != "InteractiveTime" {
-		fmt.Println("Valid idleType value: networkIdle, InteractiveTime")
+	if !renderer.IsValidIdleType(*idleType) {
+		fmt.Println("Valid idleType value: auto, networkIdle, InteractiveTime")
 		os.Exit(1)
 	}
 	if *skipFrameCount < 0 {
