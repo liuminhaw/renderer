@@ -2,16 +2,24 @@ package renderer
 
 import (
 	"log/slog"
+	"slices"
 
 	"github.com/chromedp/cdproto/page"
 )
 
 const (
-	defaultIdleType     string = "networkIdle"
+	defaultIdleType     string = "auto"
 	defaultTimeout      int    = 30
 	defaultWindowWidth  int    = 1920
 	defaultWindowHeight int    = 1080
 )
+
+// IsValidIdleType checks if the given idleType is valid
+func IsValidIdleType(idleType string) bool {
+	validTypes := []string{"auto", "networkIdle", "InteractiveTime"}
+
+	return slices.Contains(validTypes, idleType)
+}
 
 type BrowserConf struct {
 	IdleType        string
