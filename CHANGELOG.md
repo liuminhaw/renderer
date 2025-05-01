@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0] - 2025-05-01
+
+### Added
+
+- Introduce new `idleType` option `auto`, enabled by default ([#46](https://github.com/liuminhaw/renderer/pull/46)) (Min-Haw, Liu)
+- Add render page and PDF usage examples to GoDoc ([#49](https://github.com/liuminhaw/renderer/pull/49)) (Min-Haw, Liu)
+
 ## [0.10.0] - 2025-01-28
 
 ### Changed
@@ -10,7 +17,7 @@
 ### Added
 
 - Add User-Agent option to set custom user-agent value when using automated browser for rendering ([#43](https://github.com/liuminhaw/renderer/pull/43)) (Min-Haw, Liu)
-- Set websocket url read timeout equal to the renderer timeout option ([#44](https://github.com/liuminhaw/renderer/pull/44)) (Min-Haw, Liu) 
+- Set websocket url read timeout equal to the renderer timeout option ([#44](https://github.com/liuminhaw/renderer/pull/44)) (Min-Haw, Liu)
 
 ## [0.9.1] - 2024-12-27
 
@@ -77,6 +84,8 @@
 - Modify renderer context to use custom type ([#8](https://github.com/liuminhaw/renderer/pull/8))
 
 _:seedling: Initial release._
+
+[0.11.0]: https://github.com/liuminhaw/renderer/releases/tag/v0.11.0
 
 [0.10.0]: https://github.com/liuminhaw/renderer/releases/tag/v0.10.0
 

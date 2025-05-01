@@ -14,7 +14,7 @@ Browser config values:
 
 - `IdleType`: Method to detemine render is complete
   - Type: string (valid values: auto, networkIdle, InteractiveTime)
-  - Default: networkIdle
+  - Default: auto
 - `BrowserExecPath`: Manually set chrome / chromium browser's executable path
   - Type: String
   - Default: Empty string (Auto detect)
@@ -51,7 +51,7 @@ Renderer options values:
   - Type: bool
   - Default: false
 - `SkipFrameCount`: Skip first n framces with same id as init frame, only valid
-  with idleType=networkIdle (Use on page with protection like CloudFlare)
+  when idleType is enabled (Use on page with protection like CloudFlare)
   - Type: Int
   - Default: 0
 - `UserAgent`: Set custom user agent value
