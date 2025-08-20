@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/liuminhaw/renderer"
 )
@@ -17,8 +18,16 @@ func main() {
 	imageLoad := flag.Bool("imageLoad", false, "indicate if load image when rendering")
 	idleType := flag.String("idleType", "auto",
 		"how to determine loading idle and return, valid input: auto, networkIdle, InteractiveTime")
-	skipFrameCount := flag.Int("skipFrameCount", 0,
-		"skip first n frames with same id as init frame, only valid with idleType=networkIdle")
+	networkIdleWait := flag.Duration(
+		"networkIdleWait",
+		500*time.Millisecond,
+		"network idle wait window to check for requests count, only work with idleType=networkIdle,auto",
+	)
+	networkIdleMaxInflight := flag.Int(
+		"networkIdleMaxInflight",
+		0,
+		"maximum inflight requests to consider network idle, only work with idleType=networkIdle,auto",
+	)
 	browserExecPath := flag.String("browserPath", "", "manually set browser executable path")
 	container := flag.Bool(
 		"container",
@@ -26,7 +35,7 @@ func main() {
 		"indicate if running in container (docker / lambda) environment",
 	)
 	debug := flag.Bool("debug", false, "turn on for outputing debug message")
-	chromiumDebug := flag.Bool("chromiumDebug", false, "turn on for chromium debug message output")
+	chromiumDebug := flag.Bool("chromiumDebug", false, "turn on for chromium debug message output (must enable debug for output)")
 	userAgent := flag.String(
 		"userAgent",
 		"",
@@ -43,11 +52,16 @@ func main() {
 		fmt.Println("Valid idleType value: auto, networkIdle, InteractiveTime")
 		os.Exit(1)
 	}
-	if *skipFrameCount < 0 {
-		fmt.Println("skipFrameCount should be greater than or equal to 0")
+	if *networkIdleWait < time.Duration(0) {
+		fmt.Println("networkIdleWait value should be greater than or equal to 0")
+		os.Exit(1)
+	}
+	if *networkIdleMaxInflight < 0 {
+		fmt.Println("networkIdleMaxInflight value should be greater than or equal to 0")
 		os.Exit(1)
 	}
 	flag.Parse()
+
 	if len(flag.Args()) != 1 {
 		fmt.Printf("Usage: %s url\n", os.Args[0])
 		os.Exit(1)
@@ -64,7 +78,10 @@ func main() {
 		logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
 	}
 
-	r := renderer.NewRenderer(renderer.WithLogger(logger))
+	r := renderer.NewRenderer(
+		renderer.WithLogger(logger),
+		renderer.WithIdleCheck(*networkIdleWait, *networkIdleMaxInflight),
+	)
 	context, err := r.RenderPage(url, &renderer.RendererOption{
 		BrowserOpts: renderer.BrowserConf{
 			IdleType:        *idleType,
@@ -73,13 +90,14 @@ func main() {
 			ChromiumDebug:   *chromiumDebug,
 			DebugMode:       *debug,
 		},
-		Headless:       *headless,
-		WindowWidth:    *browserWidth,
-		WindowHeight:   *browserHeight,
-		Timeout:        *timeout,
-		ImageLoad:      *imageLoad,
-		SkipFrameCount: *skipFrameCount,
-		UserAgent:      *userAgent,
+		Opts: renderer.RendererConf{
+			Headless:     *headless,
+			WindowWidth:  *browserWidth,
+			WindowHeight: *browserHeight,
+			Timeout:      *timeout,
+			ImageLoad:    *imageLoad,
+			UserAgent:    *userAgent,
+		},
 	})
 	if err != nil {
 		logger.Error(fmt.Sprintf("Render test: %s", err))
