@@ -84,7 +84,7 @@ Usage: ./render <url>
   -browserPath string
         manually set browser executable path
   -chromiumDebug
-        turn on for chromium debug message output
+        turn on for chromium debug message output (must enable debug for output)
   -container
         indicate if running in container (docker / lambda) environment
   -debug
@@ -156,7 +156,7 @@ Usage: ./pdf <url>
   -browserPath string
         manually set browser executable path
   -chromiumDebug
-        turn on for chrome debug message output
+        turn on for chrome debug message output (must enable debug for output)
   -container
         indicate if running in container (docker / lambda) environment
   -debug

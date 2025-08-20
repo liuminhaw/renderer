@@ -35,7 +35,7 @@ func main() {
 		"indicate if running in container (docker / lambda) environment",
 	)
 	debug := flag.Bool("debug", false, "turn on for outputing debug message")
-	chromiumDebug := flag.Bool("chromiumDebug", false, "turn on for chromium debug message output")
+	chromiumDebug := flag.Bool("chromiumDebug", false, "turn on for chromium debug message output (must enable debug for output)")
 	userAgent := flag.String(
 		"userAgent",
 		"",
