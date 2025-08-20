@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.12.0] - 2025-08-20
+
+### Changed
+
+- **Breaking** Changed `RendererOption` and `PdfOption` structure, will not be compatible with previous version ([#51](https://github.com/liuminhaw/renderer/pull/51)) (Min-Haw, Liu)
+- **Breaking** `SkipFrameCount` removed from `RendererOption` (now `RendererConf`) sturcture field ([#51](https://github.com/liuminhaw/renderer/pull/51)) (Min-Haw, Liu)
+- Change implementation of network idle wait type by tracking in-flight requests which previous use frame counting approach ([#51](https://github.com/liuminhaw/renderer/pull/51)) (Min-Haw, Liu)
+
 ## [0.11.0] - 2025-05-01
 
 ### Added
@@ -84,6 +92,8 @@
 - Modify renderer context to use custom type ([#8](https://github.com/liuminhaw/renderer/pull/8))
 
 _:seedling: Initial release._
+
+[0.12.0]: https://github.com/liuminhaw/renderer/releases/tag/v0.12.0
 
 [0.11.0]: https://github.com/liuminhaw/renderer/releases/tag/v0.11.0
 
