@@ -347,7 +347,7 @@ func setChromeOpts(opts chromedpOption) []chromedp.ExecAllocatorOption {
 
 	chromeOpts = append(
 		chromeOpts,
-		chromedp.Flag("blink-settings", fmt.Sprintf("imagesEnbled=%t", rendererConf.ImageLoad)),
+		chromedp.Flag("blink-settings", fmt.Sprintf("imagesEnabled=%t", rendererConf.ImageLoad)),
 		chromedp.WindowSize(rendererConf.WindowWidth, rendererConf.WindowHeight),
 		chromedp.Flag("headless", rendererConf.Headless),
 		chromedp.WSURLReadTimeout(time.Duration(rendererConf.Timeout)*time.Second),
