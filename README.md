@@ -1,6 +1,6 @@
 # renderer
 
-Golang module for executing url rendering with chromedp
+Golang module for executing url rendering / webpage pdf generation with chromedp
 
 ## Requirements
 
@@ -31,10 +31,8 @@ Browser config values:
 
 ### Renderer
 
-Renderer options values:
+Renderer config values:
 
-- `BrowserOpts`: Browser configuration
-  - Type: BrowserConf
 - `Headless`: Browser execution mode
   - Type: bool
   - Default: false
@@ -50,28 +48,32 @@ Renderer options values:
 - `ImageLoad`: Load image when rendering
   - Type: bool
   - Default: false
-- `SkipFrameCount`: Skip first n framces with same id as init frame, only valid
-  when idleType is enabled (Use on page with protection like CloudFlare)
-  - Type: Int
-  - Default: 0
 - `UserAgent`: Set custom user agent value
   - Type: string
   - Default: Empty string (Will user default user agent of the browser)
 
-**Note:** Default renderer option `defaultRendererOption` will be used if not set no explicit option is set.
+Renderer option settings:
+
+- `BrowserOpts`: Browser configuration
+  - Type: BrowserConf
+- `Opts`: Renderer configuration
+  - Type: RendererConf
+
+
+**Note:** Default renderer option `DefaultRendererOption` will be used if not set no explicit option is set.
 
 #### Example
 
 See usage example at [examples](examples/render/main.go)
 
-**Build Example / Test**
+**Build Example**
 
 ```bash
 cd examples/render
 go build
 ```
 
-**Run Example / Test**
+**Run Example**
 
 ```
 Usage: ./render <url>
@@ -93,8 +95,10 @@ Usage: ./render <url>
         how to determine loading idle and return, valid input: auto, networkIdle, InteractiveTime (default "auto")
   -imageLoad
         indicate if load image when rendering
-  -skipFrameCount int
-        skip first n frames with same id as init frame, only valid with idleType=networkIdle
+  -networkIdleMaxInflight int
+        maximum inflight requests to consider network idle, only work with idleType=networkIdle,auto
+  -networkIdleWait duration
+        network idle wait window to check for requests count, only work with idleType=networkIdle,auto (default 500ms)
   -timeout int
         seconds before timeout when rendering (default 30)
   -userAgent string
@@ -107,6 +111,8 @@ Pdf options values:
 
 - `BrowserOpts`: Browser configuration
   - Type: BrowserConf
+- `RendererOpts`: Renderer configuration
+  - Type: RendererConf
 - `Landscape`: Set paper orientation to landscape
   - Type: bool
   - Default: false
@@ -136,14 +142,14 @@ Pdf options values:
 
 See usage example at [examples](examples/pdf/main.go)
 
-**Build Example / Test**
+**Build Example**
 
 ```bash
 cd examples/pdf
 go build
 ```
 
-**Run Example / Test**
+**Run Example**
 
 ```
 Usage: ./pdf <url>
