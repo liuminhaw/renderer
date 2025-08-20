@@ -3,16 +3,24 @@ package renderer
 import (
 	"log/slog"
 	"slices"
+	"time"
 
 	"github.com/chromedp/cdproto/page"
 )
 
 const (
-	defaultIdleType     string = "auto"
-	defaultTimeout      int    = 30
-	defaultWindowWidth  int    = 1920
-	defaultWindowHeight int    = 1080
+	defaultIdleType               string        = "auto"
+	defaultTimeout                int           = 30
+	defaultWindowWidth            int           = 1920
+	defaultWindowHeight           int           = 1080
+	defaultNetworkIdleWait        time.Duration = 500 * time.Millisecond
+	defaultNetworkIdleMaxInflight int           = 0
 )
+
+type chromedpOption interface {
+	readBrowserConf() BrowserConf
+	readRendererConf() RendererConf
+}
 
 // IsValidIdleType checks if the given idleType is valid
 func IsValidIdleType(idleType string) bool {
@@ -29,28 +37,45 @@ type BrowserConf struct {
 	Container       bool
 }
 
-type RendererOption struct {
-	BrowserOpts    BrowserConf
-	Headless       bool
-	WindowWidth    int
-	WindowHeight   int
-	Timeout        int
-	ImageLoad      bool
-	SkipFrameCount int
-	UserAgent      string
+type RendererConf struct {
+	Headless     bool
+	WindowWidth  int
+	WindowHeight int
+	Timeout      int
+	ImageLoad    bool
+	UserAgent    string
 }
 
-var defaultRendererOption = RendererOption{
-	BrowserOpts: BrowserConf{
-		IdleType: defaultIdleType,
-	},
+var DefaultRendererConf = RendererConf{
+	Headless:     true,
 	WindowWidth:  defaultWindowWidth,
 	WindowHeight: defaultWindowHeight,
 	Timeout:      defaultTimeout,
 }
 
+type RendererOption struct {
+	BrowserOpts BrowserConf
+	Opts        RendererConf
+}
+
+func (opts RendererOption) readBrowserConf() BrowserConf {
+	return opts.BrowserOpts
+}
+
+func (opts RendererOption) readRendererConf() RendererConf {
+	return opts.Opts
+}
+
+var DefaultRendererOption = RendererOption{
+	BrowserOpts: BrowserConf{
+		IdleType: defaultIdleType,
+	},
+	Opts: DefaultRendererConf,
+}
+
 type PdfOption struct {
 	BrowserOpts         BrowserConf
+	RendererOpts        RendererConf
 	Landscape           bool
 	DisplayHeaderFooter bool
 	PaperWidthCm        float64
@@ -63,10 +88,19 @@ type PdfOption struct {
 
 // Chrome DevTools Protocol reference for default values:
 // https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-printToPDF
-var defaultPdfOption = PdfOption{
+var DefaultPdfOption = PdfOption{
 	BrowserOpts: BrowserConf{
 		IdleType: defaultIdleType,
 	},
+	RendererOpts: DefaultRendererConf,
+}
+
+func (opts PdfOption) readBrowserConf() BrowserConf {
+	return opts.BrowserOpts
+}
+
+func (opts PdfOption) readRendererConf() RendererConf {
+	return opts.RendererOpts
 }
 
 // setPdfParams read PDF context input and output PrintToPDFParams
@@ -107,5 +141,15 @@ type WithOption func(*Renderer)
 func WithLogger(logger *slog.Logger) WithOption {
 	return func(r *Renderer) {
 		r.logger = logger
+	}
+}
+
+// WithIdleCheck can be provided to NewRenderer function to determine how to check
+// if the network is idle before returning the result.
+// network is considered idle when there are less than or equal to maxInflight
+// requests in action in the last `idleWait` time duration window.
+func WithIdleCheck(idleWait time.Duration, maxInflight int) WithOption {
+	return func(r *Renderer) {
+		r.idleCheck = newNetworkIdle(idleWait, maxInflight)
 	}
 }

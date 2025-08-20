@@ -69,6 +69,7 @@ func main() {
 			ChromiumDebug:   *chromiumDebug,
 			DebugMode:       *debug,
 		},
+		RendererOpts:        renderer.DefaultRendererConf,
 		Landscape:           *landscape,
 		DisplayHeaderFooter: *headerFooter,
 		PaperWidthCm:        *paperWidth,
