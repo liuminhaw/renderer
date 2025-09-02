@@ -92,7 +92,13 @@ var DefaultPdfOption = PdfOption{
 	BrowserOpts: BrowserConf{
 		IdleType: defaultIdleType,
 	},
-	RendererOpts: DefaultRendererConf,
+	RendererOpts: RendererConf{
+		Headless:     true,
+		WindowWidth:  defaultWindowWidth,
+		WindowHeight: defaultWindowHeight,
+		Timeout:      defaultTimeout,
+		ImageLoad:    true,
+	},
 }
 
 func (opts PdfOption) readBrowserConf() BrowserConf {
