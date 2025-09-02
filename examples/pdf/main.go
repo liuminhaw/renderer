@@ -27,7 +27,11 @@ func main() {
 		"indicate if running in container (docker / lambda) environment",
 	)
 	debug := flag.Bool("debug", false, "turn on for outputing debug message")
-	chromiumDebug := flag.Bool("chromiumDebug", false, "turn on for chrome debug message output (must enable debug for output)")
+	chromiumDebug := flag.Bool(
+		"chromiumDebug",
+		false,
+		"turn on for chrome debug message output (must enable debug for output)",
+	)
 
 	flag.Parse()
 
@@ -69,7 +73,7 @@ func main() {
 			ChromiumDebug:   *chromiumDebug,
 			DebugMode:       *debug,
 		},
-		RendererOpts:        renderer.DefaultRendererConf,
+		RendererOpts:        renderer.DefaultPdfOption.RendererOpts,
 		Landscape:           *landscape,
 		DisplayHeaderFooter: *headerFooter,
 		PaperWidthCm:        *paperWidth,

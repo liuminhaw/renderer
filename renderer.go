@@ -153,7 +153,7 @@ func (r *Renderer) RenderPdf(urlStr string, opts *PdfOption) ([]byte, error) {
 // navigateAndWaitFor is defined as task of chromedp for rendering step
 func (r *Renderer) navigateAndWaitFor(url string, opts chromedpOption) chromedp.ActionFunc {
 	return func(ctx context.Context) error {
-		_, _, _, err := page.Navigate(url).Do(ctx)
+		_, _, _, _, err := page.Navigate(url).Do(ctx)
 		if err != nil {
 			return err
 		}
