@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.12.1] - 2025-09-02
+
+### Fixed
+
+- incompatible usage after updating to newest dependencies ([#53](https://github.com/liuminhaw/renderer/pull/53)) (Min-Haw, Liu)
+
 ## [0.12.0] - 2025-08-20
 
 ### Changed
@@ -92,6 +98,8 @@
 - Modify renderer context to use custom type ([#8](https://github.com/liuminhaw/renderer/pull/8))
 
 _:seedling: Initial release._
+
+[0.12.1]: https://github.com/liuminhaw/renderer/releases/tag/v0.12.1
 
 [0.12.0]: https://github.com/liuminhaw/renderer/releases/tag/v0.12.0
 
